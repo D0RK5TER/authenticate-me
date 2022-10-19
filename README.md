@@ -1,9 +1,11 @@
 # authenticate-me
+
+# authenticate-me
 # `<name of application here>`
 
 ## Database Schema Design
-
-https://dbdiagram.io/d/633df69ef0018a1c5fa262cb
+<img width="897" alt="Screen Shot 2022-10-19 at 3 00 04 PM" src="https://user-images.githubusercontent.com/107891735/196813429-ef3b764a-a911-4aa9-a24d-466d212d66e3.png">
+s
 
 ## API Documentation
 
@@ -1474,4 +1476,8 @@ Return spots filtered by query parameters.
         "maxPrice": "Minimum price must be greater than or equal to 0"
       }
     }
+<<<<<<< HEAD
     ```
+=======
+    ```
+>>>>>>> 449c53e4c5146e0b12c129a2a5c303f7639e572f
