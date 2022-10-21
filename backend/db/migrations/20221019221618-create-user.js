@@ -10,26 +10,26 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       firstName: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       lastName: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       username: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
+      email: {
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true
       },
       hashedPassword: {
-        type: Sequelize.VARCHAR, ///binary
+        type: Sequelize.STRING,
         allowNull: false,
-      },
-      email: {
-        type: Sequelize.VARCHAR,
-        allowNull: false,
-        unique: true
       },
       createdAt: {
         allowNull: false,
