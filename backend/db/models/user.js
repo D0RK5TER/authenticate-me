@@ -45,8 +45,16 @@ module.exports = (sequelize, DataTypes) => {
 
   User.init(
     {
+      firstName: {
+        type: DataTypes.VARCHAR,
+        allowNull: false,
+      },
+      lastName: {
+        type: DataTypes.VARCHAR,
+        allowNull: false,
+      },
       username: {
-        type: DataTypes.STRING,
+        type: DataTypes.VARCHAR,
         allowNull: false,
         validate: {
           len: [4, 30],
@@ -57,19 +65,19 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
+      hashedPassword: {
+        type: DataTypes.VARCHAR,
+        allowNull: false,
+        validate: {
+          len: [60, 60]
+        }
+      },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.VARCHAR,
         allowNull: false,
         validate: {
           len: [3, 256],
           isEmail: true
-        }
-      },
-      hashedPassword: {
-        type: DataTypes.STRING.BINARY,
-        allowNull: false,
-        validate: {
-          len: [60, 60]
         }
       }
     },

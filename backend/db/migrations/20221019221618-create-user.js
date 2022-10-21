@@ -9,19 +9,27 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
-        type: Sequelize.STRING,
+      firstName: {
+        type: Sequelize.VARCHAR,
         allowNull: false,
-        unique: true
       },
-      email: {
-        type: Sequelize.STRING,
+      lastName: {
+        type: Sequelize.VARCHAR,
+        allowNull: false,
+      },
+      username: {
+        type: Sequelize.VARCHAR,
         allowNull: false,
         unique: true
       },
       hashedPassword: {
-        type: Sequelize.STRING, ///binary
+        type: Sequelize.VARCHAR, ///binary
         allowNull: false,
+      },
+      email: {
+        type: Sequelize.VARCHAR,
+        allowNull: false,
+        unique: true
       },
       createdAt: {
         allowNull: false,
