@@ -11,11 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      SpotImage.belongsTo(models.Spot)
+
     }
   }
   SpotImage.init({
     spotId: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Spots',
+      },
     },
     url: {
       type: DataTypes.STRING

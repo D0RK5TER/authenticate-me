@@ -7,19 +7,25 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       spotId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'Spots' },
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'Users' },
       },
       startDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY,
+        allowNull: false,
       },
       endDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
