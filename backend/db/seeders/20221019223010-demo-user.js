@@ -186,26 +186,26 @@ module.exports = {
       {
         spotId: 2,
         userId: 1,
-        startDate: '2020-20-11',
-        endDate: '2020-20-02'
+        startDate: '2020-01-11',
+        endDate: '2020-02-02'
       },
       {
         spotId: 3,
         userId: 2,
-        startDate: '2022-20-05',
-        endDate: '2022-20-01'
+        startDate: '2022-02-05',
+        endDate: '2022-03-01'
       },
       {
         spotId: 1,
         userId: 2,
-        startDate: '2022-20-04',
-        endDate: '2022-20-01'
+        startDate: '2022-04-04',
+        endDate: '2022-05-01'
       },
       {
         spotId: 1,
         userId: 3,
-        startDate: '2022-20-02',
-        endDate: '2022-20-01'
+        startDate: '2022-06-02',
+        endDate: '2022-07-01'
       }
 
     ], {})
