@@ -1,7 +1,7 @@
 const express = require('express')
 
 const { setTokenCookie, restoreUser } = require('../../utils/auth');
-const { User } = require('../../db/models');
+const { User, sequelize } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
@@ -25,7 +25,7 @@ router.post(
     async (req, res, next) => {
         const { credential, password } = req.body;
 
-        const user = await User.login({ credential, password });
+        let user = await User.login({ credential, password });
 
         if (!user) {
             const err = new Error('Login failed');
@@ -37,9 +37,31 @@ router.post(
 
         await setTokenCookie(res, user);
 
-        return res.json({
-            user
-        });
+        // let newUser = {}
+        // for (let x in user) {
+        //     if (x == 'updatedAt') continue
+        //     newUser.x = x
+        // }
+        // console.log(newUser)
+        user = await User.findByPk(user.id, {
+            attributes: {
+                include: ['id', 'firstName', 'lastName', 'email', "username"]
+            }
+            // include: ['id', 'firstName', 'lastName', 'email', "username"],
+            // attributes: {'token': ''}s
+            // include:  [ [
+            //     sequelize.col("SpotImages.url"),
+            //     'previewImage'
+            // ]]
+            ,
+            // include: [User.token]
+        })
+        // await user.add('token')
+        // user.token = ''
+        // await user.save()
+        // console.log('1239829837129837912873s', user.token)
+        // return res.json(user);
+        return res.json(user);
     }
 );
 
@@ -53,12 +75,17 @@ router.delete(
 router.get(
     '/',
     restoreUser,
-    (req, res) => {
+    async (req, res) => {
         const { user } = req;
         if (user) {
-            return res.json({
-                user: user.toSafeObject()
+            // user.attributes = { excludew: ['email'] }
+            const NEWuser = await User.findOne({
+                where: { id: user.id },
+                attributes: {
+                    include: ['email']
+                }
             });
+            return res.json(NEWuser);
         } else return res.json({});
     }
 );

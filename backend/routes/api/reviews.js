@@ -1,9 +1,10 @@
 const express = require('express')
 
-const { setTokenCookie, restoreUser } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize } = require('../../db/models');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
+const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+const queryInterface = sequelize.getQueryInterface();
 
 const router = express.Router();
 
@@ -28,34 +29,100 @@ router.get('/',
     })
 
 router.get('/current',
+    requireAuth,
     async (req, res) => {
         const user = req.user.id
-        // const Muser = await User.findByPk(user)
-        const reviews = await Review.findOne({
-            where: { userId: user, },
-            include: [
-                {
-                    model: Spot,
-                    include: [{
-                        model: SpotImage,
-                        attributes: ['url']
-                    }],
-                },
-
-                // console.log(SpotImage.url)
-            ],
+        ////get all the reveiews for current user/////
+        const Reviews = await Review.findAll({
+            where: { userId: user },
+            include: [{ model: ReviewImage, attributes: ['id', 'url'] }]
         })
-        // const revImgs = await ReviewImage.findOne({
-        //     where: { userId: user, },
-        // })
-        // reviews.Spot.dataValues.previewImage = reviews.Spot.dataValues.SpotImages[0].url
-        // console.log(reviews.Spot.dataValues.previewImage)
-        // reviews.update('SpotImages', reviews.Spot.dataValues.SpotImages[0].url)
-        // reviews[0].Spot.dataValues['previewImage'] = reviews[0].Spot.SpotImages[0].url
-        res.json(reviews)
-        // console.log(reviews)
+        //loop through the array of reviews
+        for (let rev of Reviews) {
+            //find the user of review
+            const user = await User.findOne({
+                where: { id: rev.userId },
+                attributes: ['id', 'firstName', 'lastName']
+            })
+            //find the spot of the review
+            const spot = await Spot.findOne({
+                where: { id: rev.spotId },
+                include: [
+                    {
+                        model: SpotImage,
+                        attributes: [],
+                        where: {
+                            preview: true
+                        },
+                    }],
+                //change the stupid col name
+                attributes: {
+                    include: [
+                        [
+                            sequelize.col("SpotImages.url"),
+                            'previewImage'
+                        ]
+                    ],
+                    exclude: ['createdAt', 'updatedAt']
+                },
+            })
+            //assign the user and spot we awaited to each review obj
+            rev.dataValues.User = user
+            rev.dataValues.Spot = spot
+            console.log(rev)
+        }
+
+        res.json({ Reviews })
     })
 
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
+// router.get('/current',
+//     requireAuth,
+//     async (req, res) => {
+//         const user = req.user.id
+//         // const Muser = await User.findByPk(user)
+
+//         const Reviews = await Review.findAll({
+//             where: { userId: user, },
+//             include: [
+//                 {
+//                     model: User,
+//                     attributes: ['id', 'firstName', 'lastName']
+//                 },
+//                 {
+//                     model: Spot,
+//                     include: [{
+//                         model: SpotImage,
+//                         as: 'previewImage',
+//                         // where: { preview: 'TRUE' },
+//                         attributes: ['url']
+//                     },
+//                     ],
+//                     attributes: {
+//                         // include: [sequelize.col("previewImage"), "numReviews"]
+//                     }
+//                 },
+
+//                 // attributes:{include:['previewImages']}
+
+//                 // },
+//                 {
+//                     model: ReviewImage,
+//                     attributes: ['id', 'url']
+//                 }
+
+//             ],
+//             // attributes: {include: [[sequelize.col("url"), "previewImage"]]}
+//         })
+
+// Reviews.update('SpotImages', Reviews.Spot.dataValues.SpotImages[0].url)
+// Reviews[0].Spot.dataValues['previewImage'] = Reviews[0].Spot.SpotImages[0].url
+// queryInterface.addColumn('Spots', "previewImage", { type: DataTypes.STRING, defaultValue: 'hey' })
+// res.json({ Reviews })
+// console.log(reviews)
+// })
+////// ////// //////////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
+////// ////// ////// 
 // attributes: {
 //     includes: [
 //         [

@@ -26,9 +26,31 @@ router.get('/current',
         const bookings = await Booking.findAll({
             where: { userId: user },
             include: { model: Spot },
-            // order: [['id'], ['spotId'], [Spot, 'id']]
         })
-        // console.log(validateLogin),
+        for (let boo of bookings) {
+            const spot = await Spot.findOne({
+                where: { id: boo.spotId },
+                include: [
+                    {
+                        model: SpotImage,
+                        attributes: [],
+                        where: {
+                            preview: true
+                        },
+                    }],
+                //change the stupid col name
+                attributes: {
+                    include: [
+                        [
+                            sequelize.col("SpotImages.url"),
+                            'previewImage'
+                        ]
+                    ],
+                    exclude: ['createdAt', 'updatedAt', 'description']
+                },
+            })
+            boo.dataValues.Spot = spot
+        }
         res.json({ Bookings: bookings })
     })
 
