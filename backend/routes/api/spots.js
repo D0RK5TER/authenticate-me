@@ -94,6 +94,7 @@ router.get('/current',
         res.json({ Spots: spot })
         // console.log(reviews)
     })
+    
 router.get('/', async (req, res) => {
     const spots = await Spot.findAll({
 
@@ -126,6 +127,7 @@ router.get('/', async (req, res) => {
     })
     res.json({ Spots: spots })
 })
+
 router.get('/:spotId', async (req, res) => {
     const { spotId } = req.params
 

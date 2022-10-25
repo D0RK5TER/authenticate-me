@@ -17,6 +17,14 @@ const validateLogin = [
         .withMessage('Please provide a password.'),
     handleValidationErrors
 ];
+router.get('/',
+    // restoreUser,
+    async (req, res) => {
+        const bookings = await Booking.findAll({
+
+        })
+        res.json(bookings)
+    })
 
 router.get('/current',
     // console.log(validateLogin),
@@ -54,13 +62,13 @@ router.get('/current',
         res.json({ Bookings: bookings })
     })
 
-router.get('/',
-    // restoreUser,
-    async (req, res) => {
-        const bookings = await Booking.findAll({
+// router.get('/',
+//     // restoreUser,
+//     async (req, res) => {
+//         const bookings = await Booking.findAll({
 
-        })
-        res.json(bookings)
-    })
+//         })
+//         res.json(bookings)
+//     })
 
 module.exports = router;
