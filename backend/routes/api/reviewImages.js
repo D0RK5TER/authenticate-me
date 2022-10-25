@@ -23,9 +23,11 @@ router.delete("/:imageid",
             throw er
         }
         const thereview = await Review.findOne({ where: { id: theimage.reviewId } })
-        
-        if(){
 
+        if (user !== thereview.userId) {
+            const err = new Error("Forbidden");
+            err.status = 403
+            throw err
         }
         else {
             await theimage.destroy()
