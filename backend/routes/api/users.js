@@ -52,7 +52,13 @@ router.post(
 // }
 ///////IS IT NEEDED ABOVE^^^^^
 
+// router.put('/:spotId',
+//     requireAuth,
+//     async (req, res) => {
+//         const user = req.user.id
 
+
+//     })
 
 router.get('/', async (req, res) => {
     const users = await User.findAll({

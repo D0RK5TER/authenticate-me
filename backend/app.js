@@ -58,7 +58,7 @@ app.use((err, _req, _res, next) => {
   // check if error is a Sequelize error:
   if (err instanceof ValidationError) {
     err.errors = err.errors.map((e) => e.message);
-    
+
     if (err.errors.includes("email must be unique")) {
       err.message = "User already exists"
       err.status = 403
@@ -73,6 +73,22 @@ app.use((err, _req, _res, next) => {
       err.status = 403
       err.errors = { "email": "User with that username already exists" }
     }
+    ////broken error handler for model constraints in spot.post
+    // else if (err.stack.includes('api/spots.js:38')) {
+    //   err.message = "Validation Error"
+    //   err.status = 400
+    //   err.errors = {
+    //     "address": "Street address is required",
+    //     "city": "City is required",
+    //     "state": "State is required",
+    //     "country": "Country is required",
+    //     "lat": "Latitude is not valid",
+    //     "lng": "Longitude is not valid",
+    //     "name": "Name must be less than 50 characters",
+    //     "description": "Description is required",
+    //     "price": "Price per day is required"
+    //   }
+    // }
 
     next(err);
   } else next(err)
@@ -80,7 +96,7 @@ app.use((err, _req, _res, next) => {
 //error formatter//
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500);
-
+  // console.log(err.stack.includes('api/spots.js:40'))
   res.json({
     // title: err.title || 'Server Error',
     message: err.message,
@@ -89,6 +105,7 @@ app.use((err, _req, res, _next) => {
     stack: isProduction ? null : err.stack
   });
 });
+
 /////////////////Error Handling/////////////////////////
 
 //check 'express-validator' ffor status stuff later

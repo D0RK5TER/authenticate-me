@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { setTokenCookie, restoreUser } = require('../../utils/auth');
+const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { User, sequelize } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
@@ -23,19 +23,20 @@ router.post(
     '/',
     validateLogin,
     async (req, res, next) => {
+        // console.log('ashgdmsadhbfksdbfmbdfkjds')
         const { credential, password } = req.body;
 
         let user = await User.login({ credential, password });
-
         if (!user) {
-            const err = new Error('Login failed');
+            const err = new Error("Invalid credentials");
             err.status = 401;
             err.title = 'Login failed';
-            err.errors = ['The provided credentials were invalid.'];
+            // err.errors = ['The provided credentials were invalid.'];
             return next(err);
         }
+        // console.log(user)
 
-        await setTokenCookie(res, user);
+        await setTokenCookie(res, user)
 
         // let newUser = {}
         // for (let x in user) {
@@ -56,12 +57,8 @@ router.post(
             ,
             // include: [User.token]
         })
-        // await user.add('token')
-        // user.token = ''
-        // await user.save()
-        // console.log('1239829837129837912873s', user.token)
-        // return res.json(user);
-        return res.json(user);
+        res.json(user);
+        // next()
     }
 );
 
@@ -74,6 +71,7 @@ router.delete(
 );
 router.get(
     '/',
+    requireAuth,
     restoreUser,
     async (req, res) => {
         const { user } = req;

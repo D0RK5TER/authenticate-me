@@ -13,6 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: { model: 'Spots' },
+        onDelete: 'CASCADE',
       },
       url: {
         type: Sequelize.STRING,
@@ -20,7 +21,6 @@ module.exports = {
       },
       preview: {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,
