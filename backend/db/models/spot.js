@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 const {
   Model
-} = require("sequelize");
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
+     * The 'models/index' file will call this method automatically.
     //  */
     // checkCreate() {
     //   const { address, city, state, country, lat, lng, name, description, price } = this;
-    //   if (typeof address !== "string" || typeof city !== "string" || typeof state !== "string" || typeof country !== "string" || typeof lat !== "number" || typeof lng !== "number" || typeof name !== "string") {
+    //   if (typeof address !== 'string' || typeof city !== 'string' || typeof state !== 'string' || typeof country !== 'string' || typeof lat !== 'number' || typeof lng !== 'number' || typeof name !== 'string') {
     //     return new Error()
     //   }
     // , description, price )
@@ -19,22 +19,22 @@ module.exports = (sequelize, DataTypes) => {
     // }
     static associate(models) {
       // define association here
-      // Spot.belongsTo(models.User, {foreignKey: userId, as: "ownerId"})
-      Spot.belongsTo(models.User, { as: "Owner", foreignKey: "ownerId", })
+      // Spot.belongsTo(models.User, {foreignKey: userId, as: 'ownerId'})
+      Spot.belongsTo(models.User, { as: 'Owner', foreignKey: 'ownerId', })
       Spot.hasMany(models.SpotImage,)
       Spot.hasMany(models.Booking)
       Spot.hasMany(models.Review)
 
-      // Spot.belongsTo(models.User, { as: "owner", foreignKey: "ownerId" })
+      // Spot.belongsTo(models.User, { as: 'owner', foreignKey: 'ownerId' })
     }
   }
   Spot.init({
     ownerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Users",
+        model: 'Users',
       },
-      onDelete: "CASCADE"
+      onDelete: 'CASCADE'
     },
     address: {
       type: DataTypes.STRING,
@@ -77,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: "Spot",
+    modelName: 'Spot',
   });
   return Spot;
 };

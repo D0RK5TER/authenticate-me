@@ -1,6 +1,6 @@
-"use strict";
-const { Model, Validator } = require("sequelize");
-const bcrypt = require("bcryptjs");
+'use strict';
+const { Model, Validator } = require('sequelize');
+const bcrypt = require('bcryptjs');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       return bcrypt.compareSync(password, this.hashedPassword.toString());
     }
     static getCurrentUserById(id) {
-      return User.scope("currentUser").findByPk(id);
+      return User.scope('currentUser').findByPk(id);
     }
     static async login({ credential, password }) {
-      const { Op } = require("sequelize");
-      const user = await User.scope("loginUser").findOne({
+      const { Op } = require('sequelize');
+      const user = await User.scope('loginUser').findOne({
         where: {
           [Op.or]: {
             username: credential,
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
       if (user && user.validatePassword(password)) {
-        return await User.scope("currentUser").findByPk(user.id);
+        return await User.scope('currentUser').findByPk(user.id);
       }
     }
     static async signup({ firstName, lastName, username, email, password }) {
@@ -37,16 +37,16 @@ module.exports = (sequelize, DataTypes) => {
         email,
         hashedPassword
       });
-      return await User.scope("currentUser").findByPk(user.id);
+      return await User.scope('currentUser').findByPk(user.id);
     }
 
     static associate(models) {
       // define association here
       User.hasMany(models.Review)
       User.hasMany(models.Booking)
-      User.hasMany(models.Spot, { foreignKey: "ownerId" })
+      User.hasMany(models.Spot, { foreignKey: 'ownerId' })
 
-      // User.hasMany(models.Spot, { as: "owner", foreignKey: "ownerId" })
+      // User.hasMany(models.Spot, { as: 'owner', foreignKey: 'ownerId' })
     }
   };
 
@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
           len: [4, 30],
           isNotEmail(value) {
             if (Validator.isEmail(value)) {
-              throw new Error("Cannot be an email.");
+              throw new Error('Cannot be an email.');
             }
           }
         }
@@ -90,15 +90,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "User",
+      modelName: 'User',
       defaultScope: {
         attributes: {
-          exclude: ["hashedPassword", "email", "createdAt", "updatedAt"]
+          exclude: ['hashedPassword', 'email', 'createdAt', 'updatedAt']
         }
       },
       scopes: {
         currentUser: {
-          attributes: { exclude: ["hashedPassword"] }
+          attributes: { exclude: ['hashedPassword'] }
         },
         loginUser: {
           attributes: {}
