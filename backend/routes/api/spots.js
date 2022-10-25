@@ -94,6 +94,38 @@ router.get('/current',
         res.json({ Spots: spot })
         // console.log(reviews)
     })
+router.get('/', async (req, res) => {
+    const spots = await Spot.findAll({
+
+        include: [{
+            model: Review,
+            attributes: [], //to disappear//
+        },
+        {
+            model: SpotImage,
+            attributes: [],
+            where: {
+                preview: true
+            },
+        }
+        ],
+        attributes: {
+            include: [
+                [
+                    sequelize.fn("AVG", sequelize.col("Reviews.stars")),
+                    "avgRating"
+                ],
+                [
+                    sequelize.col("SpotImages.url"),
+                    'previewImage'
+                ]
+            ],
+        },
+
+        group: ['Spot.id']
+    })
+    res.json({ Spots: spots })
+})
 router.get('/:spotId', async (req, res) => {
     const { spotId } = req.params
 
@@ -138,38 +170,38 @@ router.get('/:spotId', async (req, res) => {
 //     group: ['Spot.id']w
 // })
 // res.json(spot)
-router.get('/', async (req, res) => {
-    const spots = await Spot.findAll({
+// router.get('/', async (req, res) => {
+//     const spots = await Spot.findAll({
 
-        include: [{
-            model: Review,
-            attributes: [], //to disappear//
-        },
-        {
-            model: SpotImage,
-            attributes: [],
-            where: {
-                preview: true
-            },
-        }
-        ],
-        attributes: {
-            include: [
-                [
-                    sequelize.fn("AVG", sequelize.col("Reviews.stars")),
-                    "avgRating"
-                ],
-                [
-                    sequelize.col("SpotImages.url"),
-                    'previewImage'
-                ]
-            ],
-        },
+//         include: [{
+//             model: Review,
+//             attributes: [], //to disappear//
+//         },
+//         {
+//             model: SpotImage,
+//             attributes: [],
+//             where: {
+//                 preview: true
+//             },
+//         }
+//         ],
+//         attributes: {
+//             include: [
+//                 [
+//                     sequelize.fn("AVG", sequelize.col("Reviews.stars")),
+//                     "avgRating"
+//                 ],
+//                 [
+//                     sequelize.col("SpotImages.url"),
+//                     'previewImage'
+//                 ]
+//             ],
+//         },
 
-        group: ['Spot.id']
-    })
-    res.json({ Spots: spots })
-})
+//         group: ['Spot.id']
+//     })
+//     res.json({ Spots: spots })
+// })
 ///// /////// ^ ////// ^ ///// ^ /////// ^ //////  GETS ///// /////// ////// ///// /////// ////// ///// /////// ////// ///// /////// ////// /////
 // {
 //     "address": "aaa123 Disney Lane",
