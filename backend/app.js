@@ -1,17 +1,17 @@
-const express = require('express');
-require('express-async-errors');
-const morgan = require('morgan');
-const cors = require('cors');
-const csurf = require('csurf');
-const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
+const express = require("express");
+require("express-async-errors");
+const morgan = require("morgan");
+const cors = require("cors");
+const csurf = require("csurf");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
-const { environment } = require('./config');
-const isProduction = environment === 'production';
+const { environment } = require("./config");
+const isProduction = environment === "production";
 
 const app = express();
 
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 app.use(cookieParser());
 app.use(express.json());
@@ -40,16 +40,16 @@ app.use(
   })
 );
 
-const routes = require('./routes');
+const routes = require("./routes");
 app.use(routes);
 
-const { ValidationError } = require('sequelize');
+const { ValidationError } = require("sequelize");
 /////////////////Error Handling/////////////////////////
 //normal//
 app.use((_req, _res, next) => {
-  const err = new Error("The requested resource couldn't be found.");
+  const err = new Error("The requested resource couldn"t be found.");
   err.title = "Resource Not Found";
-  err.errors = ["The requested resource couldn't be found."];
+  err.errors = ["The requested resource couldn"t be found."];
   err.status = 404;
   next(err);
 });
@@ -74,7 +74,7 @@ app.use((err, _req, _res, next) => {
       err.errors = { "email": "User with that username already exists" }
     }
     ////broken error handler for model constraints in spot.post
-    // else if (err.stack.includes('api/spots.js:38')) {
+    // else if (err.stack.includes("api/spots.js:38")) {
     //   err.message = "Validation Error"
     //   err.status = 400
     //   err.errors = {
@@ -96,9 +96,9 @@ app.use((err, _req, _res, next) => {
 //error formatter//
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500);
-  // console.log(err.stack.includes('api/spots.js:40'))
+  // console.log(err.stack.includes("api/spots.js:40"))
   res.json({
-    // title: err.title || 'Server Error',
+    // title: err.title || "Server Error",
     message: err.message,
     statusCode: err.status,
     errors: err.errors,
@@ -108,7 +108,7 @@ app.use((err, _req, res, _next) => {
 
 /////////////////Error Handling/////////////////////////
 
-//check 'express-validator' ffor status stuff later
+//check "express-validator" ffor status stuff later
 
 
 

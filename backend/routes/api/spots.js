@@ -1,45 +1,45 @@
-const express = require('express')
+const express = require("express")
 
-const { setTokenCookie, requireAuth, restoreUser } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, SpotImage, Booking, sequelize, Sequelize, checkCreate, dataValues } = require('../../db/models');
-const { check } = require('express-validator');
+const { setTokenCookie, requireAuth, restoreUser } = require("../../utils/auth");
+const { User, Spot, Review, ReviewImage, SpotImage, Booking, sequelize, Sequelize, checkCreate, dataValues } = require("../../db/models");
+const { check } = require("express-validator");
 const { Op, ValidationError } = require("sequelize");
 const queryInterface = sequelize.getQueryInterface();
 // const {op}
-const { handleValidationErrors } = require('../../utils/validation');
-const { urlencoded } = require('express');
-const e = require('express');
+const { handleValidationErrors } = require("../../utils/validation");
+const { urlencoded } = require("express");
+const e = require("express");
 
 const router = express.Router();
 
 // const validateTOR = [
-//     check('lat')
+//     check("lat")
 //         .isNumeric()
-//         .withMessage('Please provide a valid address.'),
-//     //     .withMessage('Please provide a valid address.'),
-//     // check('city')
-//     //     .withMessage('Please provide a valid city.'),
+//         .withMessage("Please provide a valid address."),
+//     //     .withMessage("Please provide a valid address."),
+//     // check("city")
+//     //     .withMessage("Please provide a valid city."),
 //     // handleValidatiosnErrors
 //     // .exists({ checkFalsy: true })
 //     // .isEmail()
 //     // .exists({ checkFalsy: true })
 //     // .isLength({ min: 4 })
-//     // check('username')
+//     // check("username")
 //     //     .not()
 //     //     .isEmail()
-//     //     .withMessage('Username cannot be an email.'),
-//     // check('password')
+//     //     .withMessage("Username cannot be an email."),
+//     // check("password")
 //     //     .exists({ checkFalsy: true })
 //     //     .isLength({ min: 6 })
-//     //     .withMessage('Password must be 6 characters or more.'),
+//     //     .withMessage("Password must be 6 characters or more."),
 //     handleValidationErrors
 // ];
 // /:spotId/reviews
-router.get('/:spotId/reviews', async (req, res) => {
+router.get("/:spotId/reviews", async (req, res) => {
     const { spotId } = req.params
     const theSpot = await Spot.findByPk(spotId)
     if (!theSpot) {
-        err = new Error("Spot couldn't be found")
+        err = new Error("Spot couldn"t be found")
         err.status = 404
         throw err
     }
@@ -47,15 +47,15 @@ router.get('/:spotId/reviews', async (req, res) => {
         where: { spotId: spotId },
         include: [{
             model: User,
-            attributes: ['id', 'firstName', 'lastName']
+            attributes: ["id", "firstName", "lastName"]
         }, {
             model: ReviewImage,
-            attributes: ['id', 'url']
+            attributes: ["id", "url"]
         }],
     })
     res.json({ Reviews: reviews })
 })
-router.get('/:spotId/bookings',
+router.get("/:spotId/bookings",
     requireAuth,
     async (req, res) => {
         const { spotId } = req.params
@@ -63,7 +63,7 @@ router.get('/:spotId/bookings',
         // const spat = await Spot.findByPk(spotId)
         const spat = await Spot.findOne({ where: { id: spotId } })
         if (!spat) {
-            let er = new Error("Spot couldn't be found")
+            let er = new Error("Spot couldn"t be found")
             er.status = 404
             throw er
         }
@@ -74,20 +74,20 @@ router.get('/:spotId/bookings',
             for (let x of Bookings) {
                 x.dataValues["User"] = await User.findOne({
                     where: { id: x.dataValues.userId },
-                    attributes: { exclude: ['username'] }
+                    attributes: { exclude: ["username"] }
                 })
             }
             res.json({ Bookings })
         } else {
             const Bookings = await Booking.findAll({
                 where: { spotId: spotId },
-                attributes: { exclude: ['createdAt', 'updatedAt', 'id', 'userId'] }
+                attributes: { exclude: ["createdAt", "updatedAt", "id", "userId"] }
             })
             res.json({ Bookings })
         }
     })
 
-router.get('/current',
+router.get("/current",
     requireAuth,
     async (req, res) => {
         const user = req.user.id
@@ -113,18 +113,18 @@ router.get('/current',
                     ],
                     [
                         sequelize.col("SpotImages.url"),
-                        'previewImage'
+                        "previewImage"
                     ]
                 ],
             },
 
-            group: ['Spot.id']
+            group: ["Spot.id"]
         })
         res.json({ Spots: spot })
         // console.log(reviews)
     })
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
     const spots = await Spot.findAll({
 
         include: [{
@@ -157,13 +157,13 @@ router.get('/', async (req, res) => {
     res.json({ Spots: spots })
 })
 
-router.get('/:spotId', async (req, res) => {
+router.get("/:spotId", async (req, res) => {
     const { spotId } = req.params
 
     const spotCheck = await Spot.findByPk(spotId)
 
     if (!spotCheck) {
-        err = new Error("Spot couldn't be found")
+        err = new Error("Spot couldn"t be found")
         err.status = 404
         throw err
     }
@@ -172,14 +172,14 @@ router.get('/:spotId', async (req, res) => {
         where: { id: spotId },
         include: [{
             model: SpotImage,
-            attributes: ['id', 'url', 'preview'],
+            attributes: ["id", "url", "preview"],
             // where: { spotId: spotId }
         },
         {
             model: User,
-            as: 'Owner',
+            as: "Owner",
             where: { id: spotId },
-            attributes: ['id', 'firstName', 'lastName'],
+            attributes: ["id", "firstName", "lastName"],
         },
         {
             model: Review,
@@ -190,7 +190,7 @@ router.get('/:spotId', async (req, res) => {
             include: [
                 [sequelize.fn("COUNT", sequelize.col("Reviews.Id")), "numReviews"],
                 [sequelize.fn("AVG", sequelize.col("Reviews.stars")), "avgRating"],
-                // [sequelize.col('User'), 'Owner']
+                // [sequelize.col("User"), "Owner"]
                 // async get(instances: Model | Array<Model>, options: object): Promise<Model>
             ]
         }
@@ -199,10 +199,10 @@ router.get('/:spotId', async (req, res) => {
     res.json(spot)
 })
 
-//     group: ['Spot.id']w
+//     group: ["Spot.id"]w
 // })
 // res.json(spot)
-// router.get('/', async (req, res) => {
+// router.get("/", async (req, res) => {
 //     const spots = await Spot.findAll({
 
 //         include: [{
@@ -225,12 +225,12 @@ router.get('/:spotId', async (req, res) => {
 //                 ],
 //                 [
 //                     sequelize.col("SpotImages.url"),
-//                     'previewImage'
+//                     "previewImage"
 //                 ]
 //             ],
 //         },
 
-//         group: ['Spot.id']
+//         group: ["Spot.id"]
 //     })
 //     res.json({ Spots: spots })
 // })
@@ -246,7 +246,7 @@ router.get('/:spotId', async (req, res) => {
 //     "description": "Place where web developers are created",
 //     "price": 123
 //   }
-router.post('/:spotId/images',
+router.post("/:spotId/images",
     requireAuth,
     async (req, res) => {
         const { url, preview } = req.body
@@ -254,7 +254,7 @@ router.post('/:spotId/images',
         const theSpot = await Spot.findByPk(spotId)
 
         if (!theSpot) {
-            const err = new Error("Spot couldn't be found");
+            const err = new Error("Spot couldn"t be found");
             err.status = 404
             throw err
         }
@@ -274,14 +274,14 @@ router.post('/:spotId/images',
         const newImga = await SpotImage.findOne({
             where: { spotId: spotId, url },
             attributes: {
-                exclude: ['spotId', 'createdAt', 'updatedAt']
+                exclude: ["spotId", "createdAt", "updatedAt"]
             }
         })
         res.json(newImga)
     }
 )
 
-router.post('/:spotId/reviews',
+router.post("/:spotId/reviews",
     requireAuth,
     async (req, res, next) => {
         const { review, stars } = req.body
@@ -304,7 +304,7 @@ router.post('/:spotId/reviews',
         const currReviews = await Review.findAll({ where: { spotId: spotId } })
 
         if (!theSpot) {
-            const err = new Error("Spot couldn't be found");
+            const err = new Error("Spot couldn"t be found");
             err.status = 404
             throw err
 
@@ -341,7 +341,7 @@ router.post('/:spotId/reviews',
         //     throw err
         // }
         // if (!theSpot) {
-        //     const err = new Error("Spot couldn't be found");
+        //     const err = new Error("Spot couldn"t be found");
         //     err.status = 404
         //     throw err
 
@@ -350,7 +350,7 @@ router.post('/:spotId/reviews',
 
     }
 )
-router.post('/:spotId/bookings',
+router.post("/:spotId/bookings",
     requireAuth,
     async (req, res) => {
         const { startDate, endDate } = req.body
@@ -371,7 +371,7 @@ router.post('/:spotId/bookings',
         }
         const spat = await Spot.findByPk(spotId)
         if (!spat) {
-            let er = new Error("Spot couldn't be found")
+            let er = new Error("Spot couldn"t be found")
             er.status = 404
             throw er
         }
@@ -419,7 +419,7 @@ router.post('/:spotId/bookings',
     })
 
 
-router.post('/',
+router.post("/",
     requireAuth,
     async (req, res, next) => {
 
@@ -481,7 +481,7 @@ router.post('/',
 
 
 // )
-router.put('/:spotId',
+router.put("/:spotId",
     requireAuth,
     // restoreUser,
     async (req, res) => {
@@ -495,7 +495,7 @@ router.put('/:spotId',
             where: { id: spotId }
         })
         if (!theSpot) {
-            let er = new Error("Spot couldn't be found")
+            let er = new Error("Spot couldn"t be found")
             er.status = 404
             throw er
         }
@@ -528,7 +528,7 @@ router.put('/:spotId',
         }
 
         // if (!theSpot) {
-        //     let er = new Error("Spot couldn't be found")
+        //     let er = new Error("Spot couldn"t be found")
         //     er.status = 404
         //     throw er
         // }
@@ -556,7 +556,7 @@ router.put('/:spotId',
 
 
 // router.post(
-//     '/',
+//     "/",
 //     validateSignup,
 //     async (req, res) => {
 //         const { address, city, state, country, lat, lng, name, description, price } = req.body;
@@ -591,7 +591,7 @@ router.delete("/:spotid",
         const theSpot = await Spot.findOne({ where: { id: spotid } })
 
         if (!theSpot) {
-            let er = new Error("Spot couldn't be found")
+            let er = new Error("Spot couldn"t be found")
             er.status = 404
             throw er
         }

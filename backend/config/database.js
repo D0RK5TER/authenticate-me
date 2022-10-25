@@ -1,5 +1,5 @@
 // backend/config/database.js
-const config = require('./index');
+const config = require("./index");
 
 module.exports = {
   development: {
@@ -10,10 +10,10 @@ module.exports = {
     typeValidation: true
   },
   production: {
-    use_env_variable: 'DATABASE_URL',
-    dialect: 'postgres',
-    seederStorage: 'sequelize',
-    protocol: 'postgres',
+    use_env_variable: "DATABASE_URL",
+    dialect: "postgres",
+    seederStorage: "sequelize",
+    protocol: "postgres",
     dialectOptions: {
       ssl: {
         require: true,

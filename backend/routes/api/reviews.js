@@ -1,26 +1,26 @@
-const express = require('express')
+const express = require("express")
 
-const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require('../../db/models');
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
+const { setTokenCookie, restoreUser, requireAuth } = require("../../utils/auth");
+const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require("../../db/models");
+const { check } = require("express-validator");
+const { handleValidationErrors } = require("../../utils/validation");
 const queryInterface = sequelize.getQueryInterface();
 
 const router = express.Router();
 
 const validateLogin = [
-    check('credential')
+    check("credential")
         .exists({ checkFalsy: true })
         .notEmpty()
-        .withMessage('Please provide a valid email or username.'),
-    check('password')
+        .withMessage("Please provide a valid email or username."),
+    check("password")
         .exists({ checkFalsy: true })
-        .withMessage('Please provide a password.'),
+        .withMessage("Please provide a password."),
     handleValidationErrors
 ];
 
 
-router.post('/:reviewId/images',
+router.post("/:reviewId/images",
     requireAuth,
     async (req, res) => {
         const { reviewId } = req.params
@@ -38,7 +38,7 @@ router.post('/:reviewId/images',
 
         // console.log(imgs.length)
         if (!rev) {
-            err = new Error("Review couldn't be found")
+            err = new Error("Review couldn"t be found")
             err.status = 404
             throw err
         }
@@ -64,14 +64,14 @@ router.post('/:reviewId/images',
         })
         const returnAdd = await ReviewImage.findOne({
             where: { id: newAdd.id },
-            attributes: ['id', 'url']
+            attributes: ["id", "url"]
         })
 
         res.json(returnAdd)
     })
 
 
-router.get('/',
+router.get("/",
     // restoreUser,
     async (req, res) => {
         const reviews = await Review.findAll({
@@ -80,21 +80,21 @@ router.get('/',
         res.json(reviews)
     })
 
-router.get('/current',
+router.get("/current",
     requireAuth,
     async (req, res) => {
         const user = req.user.id
         ////get all the reveiews for current user/////
         const Reviews = await Review.findAll({
             where: { userId: user },
-            include: [{ model: ReviewImage, attributes: ['id', 'url'] }]
+            include: [{ model: ReviewImage, attributes: ["id", "url"] }]
         })
         //loop through the array of reviews
         for (let rev of Reviews) {
             //find the user of review
             const user = await User.findOne({
                 where: { id: rev.userId },
-                attributes: ['id', 'firstName', 'lastName']
+                attributes: ["id", "firstName", "lastName"]
             })
             //find the spot of the review
             const spot = await Spot.findOne({
@@ -112,10 +112,10 @@ router.get('/current',
                     include: [
                         [
                             sequelize.col("SpotImages.url"),
-                            'previewImage'
+                            "previewImage"
                         ]
                     ],
-                    exclude: ['createdAt', 'updatedAt']
+                    exclude: ["createdAt", "updatedAt"]
                 },
             })
             //assign the user and spot we awaited to each review obj
@@ -126,7 +126,7 @@ router.get('/current',
 
         res.json({ Reviews })
     })
-router.put('/:reviewId',
+router.put("/:reviewId",
     requireAuth,
     async (req, res) => {
         const { reviewId } = req.params
@@ -144,7 +144,7 @@ router.put('/:reviewId',
             }
             throw err
         } else if (!theRev) {
-            const err = new Error("Review couldn't be found")
+            const err = new Error("Review couldn"t be found")
             err.status = 404
             throw err
         } else if (theRev.userId !== user) {
@@ -159,7 +159,7 @@ router.put('/:reviewId',
         }
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
-// router.get('/current',
+// router.get("/current",
 //     requireAuth,
 //     async (req, res) => {
 //         const user = req.user.id
@@ -170,15 +170,15 @@ router.put('/:reviewId',
 //             include: [
 //                 {
 //                     model: User,
-//                     attributes: ['id', 'firstName', 'lastName']
+//                     attributes: ["id", "firstName", "lastName"]
 //                 },
 //                 {
 //                     model: Spot,
 //                     include: [{
 //                         model: SpotImage,
-//                         as: 'previewImage',
-//                         // where: { preview: 'TRUE' },
-//                         attributes: ['url']
+//                         as: "previewImage",
+//                         // where: { preview: "TRUE" },
+//                         attributes: ["url"]
 //                     },
 //                     ],
 //                     attributes: {
@@ -186,21 +186,21 @@ router.put('/:reviewId',
 //                     }
 //                 },
 
-//                 // attributes:{include:['previewImages']}
+//                 // attributes:{include:["previewImages"]}
 
 //                 // },
 //                 {
 //                     model: ReviewImage,
-//                     attributes: ['id', 'url']
+//                     attributes: ["id", "url"]
 //                 }
 
 //             ],
 //             // attributes: {include: [[sequelize.col("url"), "previewImage"]]}
 //         })
 
-// Reviews.update('SpotImages', Reviews.Spot.dataValues.SpotImages[0].url)
-// Reviews[0].Spot.dataValues['previewImage'] = Reviews[0].Spot.SpotImages[0].url
-// queryInterface.addColumn('Spots', "previewImage", { type: DataTypes.STRING, defaultValue: 'hey' })
+// Reviews.update("SpotImages", Reviews.Spot.dataValues.SpotImages[0].url)
+// Reviews[0].Spot.dataValues["previewImage"] = Reviews[0].Spot.SpotImages[0].url
+// queryInterface.addColumn("Spots", "previewImage", { type: DataTypes.STRING, defaultValue: "hey" })
 // res.json({ Reviews })
 // console.log(reviews)
 // })
@@ -210,7 +210,7 @@ router.put('/:reviewId',
 //     includes: [
 //         [
 //             sequelize.col("SpotImages.url"),
-//             'previewImage'
+//             "previewImage"
 //         ]
 //     ],
 // },
@@ -222,7 +222,7 @@ router.delete("/:reviewid",
         const theReview = await Review.findOne({ where: { id: reviewid } })
 
         if (!theReview) {
-            let er = new Error("Review couldn't be found")
+            let er = new Error("Review couldn"t be found")
             er.status = 404
             throw er
         } else if (theReview.userId !== user) {
