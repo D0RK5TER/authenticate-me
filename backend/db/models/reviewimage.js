@@ -21,9 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Reviews',
       },
+      allowNull: false,
     },
     url: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false,
     }
   }, {
     sequelize,

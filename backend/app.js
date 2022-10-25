@@ -42,6 +42,7 @@ app.use(
 
 const routes = require('./routes');
 app.use(routes);
+
 const { ValidationError } = require('sequelize');
 /////////////////Error Handling/////////////////////////
 //normal//
@@ -57,18 +58,24 @@ app.use((err, _req, _res, next) => {
   // check if error is a Sequelize error:
   if (err instanceof ValidationError) {
     err.errors = err.errors.map((e) => e.message);
+    
     if (err.errors.includes("email must be unique")) {
       err.message = "User already exists"
       err.status = 403
       err.errors = { "email": "User with that email already exists" }
     }
-    if (err.errors.includes("username must be unique")) {
+    else if (err.errors.includes("username must be unique")) {
+      err.message = "User already exists"
+      err.status = 403
+      err.errors = { "email": "User with that username already exists" }
+    } else if (err.errors.includes("Please provide a valid address")) {
       err.message = "User already exists"
       err.status = 403
       err.errors = { "email": "User with that username already exists" }
     }
+
     next(err);
-  }
+  } else next(err)
 });
 //error formatter//
 app.use((err, _req, res, _next) => {

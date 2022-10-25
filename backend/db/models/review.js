@@ -24,19 +24,23 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Spots',
       },
+      allowNull: false,
     },
     userId: {
       type: DataTypes.INTEGER,
       references: {
         model: 'Users',
       },
+      allowNull: false,
 
     },
     review: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     stars: {
       type: DataTypes.INTEGER,
+      allowNull: false,
     }
   }, {
     sequelize,

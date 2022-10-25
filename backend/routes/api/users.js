@@ -6,6 +6,7 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
+
 const validateSignup = [
     check('email')
         .exists({ checkFalsy: true })
