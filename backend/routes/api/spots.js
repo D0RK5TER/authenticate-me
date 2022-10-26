@@ -140,10 +140,11 @@ router.get('/', async (req, res) => {
             where: {
                 preview: true
             },
+            required: false
         }
         ],
 
-        group: ['Spot.id', 'SpotImages.url']
+        // group: ['Spot.id', 'SpotImages.url']
     })
     res.json({ Spots: spots })
 })
