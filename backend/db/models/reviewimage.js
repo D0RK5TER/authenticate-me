@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 const {
   Model
-} = require("sequelize");
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class ReviewImage extends Model {
     /**
@@ -20,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Reviews",
+        model: 'Reviews',
       },
-      onDelete: "CASCADE",
+      onDelete: 'CASCADE',
     },
     url: {
       type: DataTypes.STRING,
@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: "ReviewImage",
+    modelName: 'ReviewImage',
   });
   return ReviewImage;
 };
