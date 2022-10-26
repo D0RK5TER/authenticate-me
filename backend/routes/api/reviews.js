@@ -38,7 +38,7 @@ router.post("/:reviewId/images",
 
         // console.log(imgs.length)
         if (!rev) {
-            err = new Error("Review couldn"t be found")
+            err = new Error("Review couldn't be found")
             err.status = 404
             throw err
         }
@@ -144,7 +144,7 @@ router.put("/:reviewId",
             }
             throw err
         } else if (!theRev) {
-            const err = new Error("Review couldn"t be found")
+            const err = new Error("Review couldn't be found")
             err.status = 404
             throw err
         } else if (theRev.userId !== user) {
@@ -222,7 +222,7 @@ router.delete("/:reviewid",
         const theReview = await Review.findOne({ where: { id: reviewid } })
 
         if (!theReview) {
-            let er = new Error("Review couldn"t be found")
+            let er = new Error("Review couldn't be found")
             er.status = 404
             throw er
         } else if (theReview.userId !== user) {

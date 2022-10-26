@@ -78,7 +78,7 @@ router.put("/:bookingId",
         const tryBook = Date.parse(startDate)
 
         if (!bookings) {
-            let er = new Error("Booking couldn"t be found")
+            let er = new Error("Booking couldn't be found")
             er.status = 404
             throw er
         } else if (bookings.userId !== user) {
@@ -94,12 +94,12 @@ router.put("/:bookingId",
         }
         else if (today >= Date.parse(startDate) || today >= Date.parse(endDate)) {
             // console.log("heyy")
-            let er = new Error("Past bookings can"t be modified")
+            let er = new Error("Past bookings can't be modified")
             er.status = 403
             throw er
         }
         else if (Date.parse(bookings.startDate) >= Date.parse(bookings.endDate)) {
-            let er = new Error("Past bookings can"t be modified")
+            let er = new Error("Past bookings can't be modified")
             er.status = 400
             // er.errors = { "endDate": "endDate cannot come before startDate" }
             throw er
@@ -138,7 +138,7 @@ router.delete("/:bookingid",
         const user = req.user.id
         const thebooking = await Booking.findOne({ where: { id: bookingid } })
         if (!thebooking) {
-            let er = new Error("Review booking couldn"t be found")
+            let er = new Error("Review booking couldn't be found")
             er.status = 404
             throw er
         }
@@ -152,7 +152,7 @@ router.delete("/:bookingid",
             err.status = 403
             throw err
         } else if (Date.parse(Boday) < today) {
-            let er = new Error("Bookings that have been started can"t be deleted")
+            let er = new Error("Bookings that have been started can't be deleted")
             er.status = 403
             throw er
         }

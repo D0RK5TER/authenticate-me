@@ -39,7 +39,7 @@ router.get("/:spotId/reviews", async (req, res) => {
     const { spotId } = req.params
     const theSpot = await Spot.findByPk(spotId)
     if (!theSpot) {
-        err = new Error("Spot couldn"t be found")
+        err = new Error("Spot couldn't be found")
         err.status = 404
         throw err
     }
@@ -63,7 +63,7 @@ router.get("/:spotId/bookings",
         // const spat = await Spot.findByPk(spotId)
         const spat = await Spot.findOne({ where: { id: spotId } })
         if (!spat) {
-            let er = new Error("Spot couldn"t be found")
+            let er = new Error("Spot couldn't be found")
             er.status = 404
             throw er
         }
@@ -163,7 +163,7 @@ router.get("/:spotId", async (req, res) => {
     const spotCheck = await Spot.findByPk(spotId)
 
     if (!spotCheck) {
-        err = new Error("Spot couldn"t be found")
+        err = new Error("Spot couldn't be found")
         err.status = 404
         throw err
     }
@@ -254,7 +254,7 @@ router.post("/:spotId/images",
         const theSpot = await Spot.findByPk(spotId)
 
         if (!theSpot) {
-            const err = new Error("Spot couldn"t be found");
+            const err = new Error("Spot couldn't be found");
             err.status = 404
             throw err
         }
@@ -304,7 +304,7 @@ router.post("/:spotId/reviews",
         const currReviews = await Review.findAll({ where: { spotId: spotId } })
 
         if (!theSpot) {
-            const err = new Error("Spot couldn"t be found");
+            const err = new Error("Spot couldn't be found");
             err.status = 404
             throw err
 
@@ -341,7 +341,7 @@ router.post("/:spotId/reviews",
         //     throw err
         // }
         // if (!theSpot) {
-        //     const err = new Error("Spot couldn"t be found");
+        //     const err = new Error("Spot couldn't be found");
         //     err.status = 404
         //     throw err
 
@@ -371,7 +371,7 @@ router.post("/:spotId/bookings",
         }
         const spat = await Spot.findByPk(spotId)
         if (!spat) {
-            let er = new Error("Spot couldn"t be found")
+            let er = new Error("Spot couldn't be found")
             er.status = 404
             throw er
         }
@@ -495,7 +495,7 @@ router.put("/:spotId",
             where: { id: spotId }
         })
         if (!theSpot) {
-            let er = new Error("Spot couldn"t be found")
+            let er = new Error("Spot couldn't be found")
             er.status = 404
             throw er
         }
@@ -528,7 +528,7 @@ router.put("/:spotId",
         }
 
         // if (!theSpot) {
-        //     let er = new Error("Spot couldn"t be found")
+        //     let er = new Error("Spot couldn't be found")
         //     er.status = 404
         //     throw er
         // }
@@ -591,7 +591,7 @@ router.delete("/:spotid",
         const theSpot = await Spot.findOne({ where: { id: spotid } })
 
         if (!theSpot) {
-            let er = new Error("Spot couldn"t be found")
+            let er = new Error("Spot couldn't be found")
             er.status = 404
             throw er
         }

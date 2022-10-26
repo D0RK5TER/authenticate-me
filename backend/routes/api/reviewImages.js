@@ -18,7 +18,7 @@ router.delete("/:imageid",
         const theimage = await ReviewImage.findOne({ where: { id: imageid } })
 
         if (!theimage) {
-            let er = new Error("Review Image couldn"t be found")
+            let er = new Error("Review Image couldn't be found")
             er.status = 404
             throw er
         }

@@ -17,7 +17,7 @@ router.delete("/:spotimageid",
         const user = req.user.id
         const theimage = await SpotImage.findOne({ where: { id: spotimageid } })
         if (!theimage) {
-            let er = new Error("Review Image couldn"t be found")
+            let er = new Error("Review Image couldn't be found")
             er.status = 404
             throw er
         }
