@@ -32,9 +32,9 @@ module.exports = (sequelize, DataTypes) => {
     ownerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'Users',
+        model: 'User',
       },
-      onDelete: 'CASCADE'
+
     },
     address: {
       type: DataTypes.STRING,

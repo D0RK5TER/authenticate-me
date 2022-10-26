@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Spots',
+        model: 'Spot',
       },
       onDelete: 'CASCADE'
     },
@@ -28,9 +28,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
-        onDelete: 'CASCADE'
+        model: 'User',
       },
+      onDelete: 'CASCADE'
     },
     startDate: {
       type: DataTypes.DATEONLY,
