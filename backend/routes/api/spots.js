@@ -142,8 +142,6 @@ router.get('/', async (req, res) => {
             },
         }
         ],
-
-        group: ['Spot.id']
     })
     res.json({ Spots: spots })
 })
