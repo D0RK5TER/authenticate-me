@@ -21,18 +21,11 @@ module.exports = (sequelize, DataTypes) => {
   Review.init({
     spotId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Spot',
-      },
-      onDelete: 'CASCADE',
+      allowNull: false,      
     },
     userId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: 'User',
-      },
-      onDelete: 'SET NULL'
+      allowNull: false,
     },
     review: {
       type: DataTypes.STRING,
