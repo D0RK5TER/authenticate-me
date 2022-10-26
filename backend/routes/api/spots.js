@@ -140,9 +140,6 @@ router.get('/', async (req, res) => {
 
 
     }
-    console.log(spots)
-
-
     res.json(spots)
 })
 
