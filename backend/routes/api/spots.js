@@ -188,7 +188,7 @@ router.get('/:spotId', async (req, res) => {
         },],
         attributes: {
             include: [
-                [sequelize.fn('COUNT', sequelize.col('Reviews.Id')), 'numReviews'],
+                [sequelize.fn('COUNT', sequelize.col('Reviews.id')), 'numReviews'],
                 [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
                 // [sequelize.col('User'), 'Owner']
                 // async get(instances: Model | Array<Model>, options: object): Promise<Model>
