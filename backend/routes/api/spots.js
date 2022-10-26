@@ -124,7 +124,7 @@ router.get('/', async (req, res) => {
             model: Review,
             attributes: {
                 include: [[
-                    sequelize.fn('AVG', sequelize.col('Reviews.stars')),
+                    Sequelize.fn('AVG', Sequelize.col('Reviews.stars')),
                     'avgRating'
                 ]]
             },
@@ -133,7 +133,7 @@ router.get('/', async (req, res) => {
             model: SpotImage,
             attributes: {
                 include: [[
-                    sequelize.col('url'),
+                    Sequelize.col('url'),
                     'previewImage'
                 ]]
             },
