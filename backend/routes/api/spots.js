@@ -102,10 +102,10 @@ router.get('/current',
 router.get('/', async (req, res) => {
 
     const spots = await Spot.findAll({
-        include: [{
-            model: Review,
-            attributes: []
-        }],
+        // include: [{
+        //     model: Review,
+        //     attributes: []
+        // }],
         // {
         //     model: SpotImage,
         //     attributes: [],
@@ -126,13 +126,13 @@ router.get('/', async (req, res) => {
     for (let x of spots) {
 
         const revs = await Review.findAll({
-            where: { 'spotId': x.id },
+            where: { spotId: x.id },
             attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] }
         })
         x.dataValues.avgRating = revs[0].dataValues.avg
 
         const img = await SpotImage.findOne({
-            where: { 'spotId': x.id },
+            where: { spotId: x.id },
             attributes: ['url']
         })
         x.dataValues.previewImage = img.dataValues.url
