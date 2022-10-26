@@ -95,28 +95,40 @@ router.get('/current',
             where: { ownerId: user },
             include: [{
                 model: Review,
-                attributes: [], //to disappear//
+                attributes: {
+                    include: [
+                        [
+                            sequelize.fn('AVG', sequelize.col('Reviews.stars')),
+                            'avgRating'
+                        ],]
+                }, 
             },
             {
                 model: SpotImage,
-                attributes: [],
+                attributes: {
+                    include: [
+                        [
+                            sequelize.col('url'),
+                            'previewImage'
+                        ],]
+                },
                 where: {
                     preview: true
                 },
             }
             ],
-            attributes: {
-                include: [
-                    [
-                        sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-                        'avgRating'
-                    ],
-                    [
-                        sequelize.col('SpotImages.url'),
-                        'previewImage'
-                    ]
-                ],
-            },
+            // attributes: {
+            //     include: [
+            //         [
+            //             sequelize.fn('AVG', sequelize.col('Reviews.stars')),
+            //             'avgRating'
+            //         ],
+            //         [
+            //             sequelize.col('SpotImages.url'),
+            //             'previewImage'
+            //         ]
+            //     ],
+            // },
 
             group: ['Spot.id']
         })
@@ -129,28 +141,38 @@ router.get('/', async (req, res) => {
 
         include: [{
             model: Review,
-            attributes: [], //to disappear//
+            attributes: {
+                include: [[
+                    sequelize.fn('AVG', sequelize.col('Reviews.stars')),
+                    'avgRating'
+                ]]
+            }, 
         },
         {
             model: SpotImage,
-            attributes: [],
+            attributes: {
+                include: [[
+                    sequelize.col('url'),
+                    'previewImage'
+                ]]
+            }, 
             where: {
                 preview: true
             },
         }
         ],
-        attributes: {
-            include: [
-                [
-                    sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-                    'avgRating'
-                ],
-                [
-                    sequelize.col('SpotImages.url'),
-                    'previewImage'
-                ]
-            ],
-        },
+        // attributes: {
+        //     include: [
+        //         [
+        //             sequelize.fn('AVG', sequelize.col('Reviews.stars')),
+        //             'avgRating'
+        //         ],
+        //         [
+        //             sequelize.col('SpotImages.url'),
+        //             'previewImage'
+        //         ]
+        //     ],
+        // },
 
         group: ['Spot.id']
     })
