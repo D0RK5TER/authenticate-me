@@ -82,7 +82,7 @@ router.put('/:bookingId',
             let er = new Error('Booking couldn`t be found')
             er.status = 404
             throw er
-        } else if (bookings.userId !== user) {
+        } else if (bookings.userId !== user /*spot owner goes */) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
