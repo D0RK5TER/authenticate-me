@@ -73,44 +73,20 @@ app.use((err, _req, _res, next) => {
       err.status = 403
       err.errors = { 'email': 'User with that username already exists' }
     }
-    ////broken error handler for model constraints in spot.post
-    // else if (err.stack.includes('api/spots.js:38')) {
-    //   err.message = 'Validation Error'
-    //   err.status = 400
-    //   err.errors = {
-    //     'address': 'Street address is required',
-    //     'city': 'City is required',
-    //     'state': 'State is required',
-    //     'country': 'Country is required',
-    //     'lat': 'Latitude is not valid',
-    //     'lng': 'Longitude is not valid',
-    //     'name': 'Name must be less than 50 characters',
-    //     'description': 'Description is required',
-    //     'price': 'Price per day is required'
-    //   }
-    // }
-
     next(err);
   } else next(err)
 });
 //error formatter//
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500);
-  // console.log(err.stack.includes('api/spots.js:40'))
   res.json({
-    // title: err.title || 'Server Error',
+    // title: err.title || 'Server Error', //// this is what was fiven but it was causin issues
     message: err.message,
     statusCode: err.status,
     errors: err.errors,
     stack: isProduction ? null : err.stack
   });
 });
-
-/////////////////Error Handling/////////////////////////
-
-//check 'express-validator' ffor status stuff later
-
-
 
 module.exports = app;
 

@@ -17,19 +17,19 @@ const validateLogin = [
         .withMessage('Please provide a password.'),
     handleValidationErrors
 ];
-router.get('/',
-    // restoreUser,
-    async (req, res) => {
-        const bookings = await Booking.findAll({
+////BELOW IS FOR TESTING NO ONE SHOULD BE ABLE TO GET ALL USERS//////
+// router.get('/',
+//     // restoreUser,
+//     async (req, res) => {
+//         const bookings = await Booking.findAll({
 
-        })
-        res.json(bookings)
-    })
-
+//         })
+//         res.json(bookings)
+//     })
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 router.get('/current',
-    // console.log(validateLogin),
     async (req, res) => {
-        validateLogin  //chekc to see if logged ins
+        validateLogin
         const user = req.user.id
         const bookings = await Booking.findAll({
             where: { userId: user },
@@ -46,7 +46,7 @@ router.get('/current',
                             preview: true
                         },
                     }],
-                //change the stupid col name
+
                 attributes: {
                     include: [
                         [
@@ -61,6 +61,7 @@ router.get('/current',
         }
         res.json({ Bookings: bookings })
     })
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 
 router.put('/:bookingId',
     // restoreUser,
@@ -85,7 +86,7 @@ router.put('/:bookingId',
             const err = new Error('Forbidden');
             err.status = 403
             throw err
-        }//////////////////////////////////////////////////////////////////////////////////////
+        }
         else if (Date.parse(startDate) >= Date.parse(endDate)) {
             let er = new Error('Validation error')
             er.status = 400
@@ -93,7 +94,6 @@ router.put('/:bookingId',
             throw er
         }
         else if (today >= Date.parse(startDate) || today >= Date.parse(endDate)) {
-            // console.log('heyy')
             let er = new Error('Past bookings can`t be modified')
             er.status = 403
             throw er
@@ -101,7 +101,6 @@ router.put('/:bookingId',
         else if (Date.parse(bookings.startDate) >= Date.parse(bookings.endDate)) {
             let er = new Error('Past bookings can`t be modified')
             er.status = 400
-            // er.errors = { 'endDate': 'endDate cannot come before startDate' }
             throw er
         }
 
@@ -109,13 +108,10 @@ router.put('/:bookingId',
             include: { model: Spot },
             where: { id: bookings.spotId }
         })
-        // console.log(occupied, 'djbsdfksdnfnlskdf')
         for (let boo of occupied) {
             let startCheck = new Date(boo.startDate)
             let endCheck = new Date(boo.endDate)
             const start = new Date(startDate)
-            // const end = new Date(endDate)
-            // console.log(boo.startDate, startDate)
             if (startCheck <= start && start <= endCheck) {
                 const err = new Error('Sorry, this spot is already booked for the specified dates')
                 err.status = 403,
@@ -144,8 +140,6 @@ router.delete('/:bookingid',
         }
         let today = new Date().valueOf()
         let Boday = thebooking.startDate
-        // console.log(today, '132353453453453', Date.parse(Boday))
-        // console.log(thebooking, bookingid)
         const spat = await Spot.findOne({ where: { id: thebooking.spotId } })
         if (!(thebooking.userId == user || spat.ownerId == user)) {
             const err = new Error('Forbidden');

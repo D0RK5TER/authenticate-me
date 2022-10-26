@@ -1,7 +1,7 @@
 const express = require('express')
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage } = require('../../db/models');
+const { User } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
@@ -52,20 +52,15 @@ router.post(
 // }
 ///////IS IT NEEDED ABOVE^^^^^
 
-// router.put('/:spotId',
-//     requireAuth,
-//     async (req, res) => {
-//         const user = req.user.id
 
-
+////BELOW IS FOR TESTING NO ONE SHOULD BE ABLE TO GET ALL USERS//////
+// router.get('/',
+// requireAuth ,
+//  async (req, res) => {
+//     const users = await User.findAll({
 //     })
-
-router.get('/', async (req, res) => {
-    const users = await User.findAll({
-        // order: [['name', 'DESC']]
-    })
-    res.json(users)
-})
+//     res.json(users)
+// })
 
 
 

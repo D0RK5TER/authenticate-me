@@ -23,7 +23,6 @@ router.post(
     '/',
     validateLogin,
     async (req, res, next) => {
-        // console.log('ashgdmsadhbfksdbfmbdfkjds')
         const { credential, password } = req.body;
 
         let user = await User.login({ credential, password });
@@ -31,34 +30,17 @@ router.post(
             const err = new Error('Invalid credentials');
             err.status = 401;
             err.title = 'Login failed';
-            // err.errors = ['The provided credentials were invalid.'];
             return next(err);
         }
-        // console.log(user)
-
         await setTokenCookie(res, user)
 
-        // let newUser = {}
-        // for (let x in user) {
-        //     if (x == 'updatedAt') continue
-        //     newUser.x = x
-        // }
-        // console.log(newUser)
         user = await User.findByPk(user.id, {
             attributes: {
-                include: ['id', 'firstName', 'lastName', 'email', 'username']
+                include: ['id', 'firstName', 'lastName', 'email', 'username'],
             }
-            // include: ['id', 'firstName', 'lastName', 'email', 'username'],
-            // attributes: {'token': ''}s
-            // include:  [ [
-            //     sequelize.col('SpotImages.url'),
-            //     'previewImage'
-            // ]]
-            ,
-            // include: [User.token]
         })
-        res.json(user);
-        // next()
+        user.dataValues.token = ''
+        res.json(user)
     }
 );
 
@@ -76,7 +58,6 @@ router.get(
     async (req, res) => {
         const { user } = req;
         if (user) {
-            // user.attributes = { excludew: ['email'] }
             const NEWuser = await User.findOne({
                 where: { id: user.id },
                 attributes: {

@@ -20,65 +20,15 @@ const validateLogin = [
 ];
 
 
-router.post('/:reviewId/images',
-    requireAuth,
-    async (req, res) => {
-        const { reviewId } = req.params
-        const { url } = req.body
-        const userId = req.user.id
 
-        const rev = await Review.findOne({
-            where: { id: reviewId },
-            // attributes: [],
-            // include: {
-            //     model: ReviewImage
-            // }
-        })
+/////THIS IS FOR TESTING PURPOSES////////
+// router.get('/',
+//     async (req, res) => {
+//         const reviews = await Review.findAll({
 
-
-        // console.log(imgs.length)
-        if (!rev) {
-            err = new Error('Review couldn`t be found')
-            err.status = 404
-            throw err
-        }
-        if (rev.userId !== userId) {
-            const err = new Error('Forbidden');
-            err.status = 403
-            throw err
-        }
-        const imgs = await ReviewImage.findAll({
-            where: { reviewId: reviewId }
-        })
-        console.log(imgs.length)
-        if (imgs.length >= 10) {
-            const err = new Error('Maximum number of images for this resource was reached');
-            err.status = 403
-            throw err
-        }
-
-
-        const newAdd = await ReviewImage.create({
-            reviewId,
-            url
-        })
-        const returnAdd = await ReviewImage.findOne({
-            where: { id: newAdd.id },
-            attributes: ['id', 'url']
-        })
-
-        res.json(returnAdd)
-    })
-
-
-router.get('/',
-    // restoreUser,
-    async (req, res) => {
-        const reviews = await Review.findAll({
-
-        })
-        res.json(reviews)
-    })
+//         })
+//         res.json(reviews)
+//     })
 
 router.get('/current',
     requireAuth,
@@ -126,6 +76,51 @@ router.get('/current',
 
         res.json({ Reviews })
     })
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
+router.post('/:reviewId/images',
+    requireAuth,
+    async (req, res) => {
+        const { reviewId } = req.params
+        const { url } = req.body
+        const userId = req.user.id
+
+        const rev = await Review.findOne({
+            where: { id: reviewId },
+        })
+
+        if (!rev) {
+            err = new Error('Review couldn`t be found')
+            err.status = 404
+            throw err
+        }
+        if (rev.userId !== userId) {
+            const err = new Error('Forbidden');
+            err.status = 403
+            throw err
+        }
+        const imgs = await ReviewImage.findAll({
+            where: { reviewId: reviewId }
+        })
+        console.log(imgs.length)
+        if (imgs.length >= 10) {
+            const err = new Error('Maximum number of images for this resource was reached');
+            err.status = 403
+            throw err
+        }
+
+
+        const newAdd = await ReviewImage.create({
+            reviewId,
+            url
+        })
+        const returnAdd = await ReviewImage.findOne({
+            where: { id: newAdd.id },
+            attributes: ['id', 'url']
+        })
+
+        res.json(returnAdd)
+    })
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 router.put('/:reviewId',
     requireAuth,
     async (req, res) => {
@@ -159,61 +154,7 @@ router.put('/:reviewId',
         }
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
-// router.get('/current',
-//     requireAuth,
-//     async (req, res) => {
-//         const user = req.user.id
-//         // const Muser = await User.findByPk(user)
 
-//         const Reviews = await Review.findAll({
-//             where: { userId: user, },
-//             include: [
-//                 {
-//                     model: User,
-//                     attributes: ['id', 'firstName', 'lastName']
-//                 },
-//                 {
-//                     model: Spot,
-//                     include: [{
-//                         model: SpotImage,
-//                         as: 'previewImage',
-//                         // where: { preview: 'TRUE' },
-//                         attributes: ['url']
-//                     },
-//                     ],
-//                     attributes: {
-//                         // include: [sequelize.col('previewImage'), 'numReviews']
-//                     }
-//                 },
-
-//                 // attributes:{include:['previewImages']}
-
-//                 // },
-//                 {
-//                     model: ReviewImage,
-//                     attributes: ['id', 'url']
-//                 }
-
-//             ],
-//             // attributes: {include: [[sequelize.col('url'), 'previewImage']]}
-//         })
-
-// Reviews.update('SpotImages', Reviews.Spot.dataValues.SpotImages[0].url)
-// Reviews[0].Spot.dataValues['previewImage'] = Reviews[0].Spot.SpotImages[0].url
-// queryInterface.addColumn('Spots', 'previewImage', { type: DataTypes.STRING, defaultValue: 'hey' })
-// res.json({ Reviews })
-// console.log(reviews)
-// })
-////// ////// //////////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
-////// ////// ////// 
-// attributes: {
-//     includes: [
-//         [
-//             sequelize.col('SpotImages.url'),
-//             'previewImage'
-//         ]
-//     ],
-// },
 router.delete('/:reviewid',
     requireAuth,
     async (req, res) => {

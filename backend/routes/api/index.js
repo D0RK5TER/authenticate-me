@@ -36,13 +36,6 @@ router.use('/review-images', reviewImagesRouter);
 router.post('/test', (req, res) => {
     res.json({ requestBody: req.body });
 });
-// router.get('/test', function (req, res) {
-//     res.json({ requestBody: req.body });
-// });
-// router.post('/test', function (req, res) {
-//     res.json({ requestBody: req.body });
-// });
-// GET / api / set - token - cookie
 
 router.get('/set-token-cookie', async (_req, res) => {
     const user = await User.findOne({
@@ -53,11 +46,7 @@ router.get('/set-token-cookie', async (_req, res) => {
     setTokenCookie(res, user);
     return res.json({ user });
 });
-// GET / api / restore - user
-
-
-
-// GET / api / require - auth
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 router.get(
     '/require-auth',
     requireAuth,

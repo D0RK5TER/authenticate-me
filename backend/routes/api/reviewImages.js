@@ -8,7 +8,7 @@ const queryInterface = sequelize.getQueryInterface();
 
 const router = express.Router();
 
-
+////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 
 router.delete('/:imageid',
     requireAuth,

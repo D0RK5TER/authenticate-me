@@ -5,36 +5,13 @@ const { User, Spot, Review, ReviewImage, SpotImage, Booking, sequelize, Sequeliz
 const { check } = require('express-validator');
 const { Op, ValidationError } = require('sequelize');
 const queryInterface = sequelize.getQueryInterface();
-// const {op}
 const { handleValidationErrors } = require('../../utils/validation');
 const { urlencoded } = require('express');
 const e = require('express');
+const spotimage = require('../../db/models/spotimage');
 
 const router = express.Router();
 
-// const validateTOR = [
-//     check('lat')
-//         .isNumeric()
-//         .withMessage('Please provide a valid address.'),
-//     //     .withMessage('Please provide a valid address.'),
-//     // check('city')
-//     //     .withMessage('Please provide a valid city.'),
-//     // handleValidatiosnErrors
-//     // .exists({ checkFalsy: true })
-//     // .isEmail()
-//     // .exists({ checkFalsy: true })
-//     // .isLength({ min: 4 })
-//     // check('username')
-//     //     .not()
-//     //     .isEmail()
-//     //     .withMessage('Username cannot be an email.'),
-//     // check('password')
-//     //     .exists({ checkFalsy: true })
-//     //     .isLength({ min: 6 })
-//     //     .withMessage('Password must be 6 characters or more.'),
-//     handleValidationErrors
-// ];
-// /:spotId/reviews
 router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params
     const theSpot = await Spot.findByPk(spotId)
@@ -86,51 +63,55 @@ router.get('/:spotId/bookings',
             res.json({ Bookings })
         }
     })
-
+// include: [
+//         [
+//             sequelize.col('url'),
+//             'previewImage'
+//         ],]
 router.get('/current',
     requireAuth,
     async (req, res) => {
+        const avg = sequelize.fn('AVG', sequelize.col('Reviews.stars'))
+        //    const imgFunc = ()=>{}
         const user = req.user.id
         const spot = await Spot.findAll({
             where: { ownerId: user },
             include: [{
                 model: Review,
-                attributes: {
-                    include: [
-                        [
-                            sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-                            'avgRating'
-                        ],]
-                }, 
+                attributes: [],
             },
             {
                 model: SpotImage,
-                attributes: {
-                    include: [
-                        [
-                            sequelize.col('url'),
-                            'previewImage'
-                        ],]
-                },
                 where: {
                     preview: true
                 },
-            }
+                attributes: [],
+            },
             ],
-            // attributes: {
-            //     include: [
-            //         [
-            //             sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-            //             'avgRating'
-            //         ],
-            //         [
-            //             sequelize.col('SpotImages.url'),
-            //             'previewImage'
-            //         ]
-            //     ],
-            // },
+            // avgRating
 
-            group: ['Spot.id']
+            attributes: {
+                include: [
+                    [avg, 'avgRating']
+                ],
+
+            },
+
+
+            //     include: [{
+            //         model: SpotImage,
+            //         where: {
+            //             preview: true
+            //         },
+            //         attributes: { include: [['url', 'previewImage']] },
+            //     }]
+
+            // include: [
+            //     [avg, 'avgRating'],
+            // [SpotImage, 'previewImage']
+            // ]
+            // },
+            // group: ['Spot.id']
         })
         res.json({ Spots: spot })
         // console.log(reviews)
@@ -146,7 +127,7 @@ router.get('/', async (req, res) => {
                     sequelize.fn('AVG', sequelize.col('Reviews.stars')),
                     'avgRating'
                 ]]
-            }, 
+            },
         },
         {
             model: SpotImage,
@@ -155,24 +136,12 @@ router.get('/', async (req, res) => {
                     sequelize.col('url'),
                     'previewImage'
                 ]]
-            }, 
+            },
             where: {
                 preview: true
             },
         }
         ],
-        // attributes: {
-        //     include: [
-        //         [
-        //             sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-        //             'avgRating'
-        //         ],
-        //         [
-        //             sequelize.col('SpotImages.url'),
-        //             'previewImage'
-        //         ]
-        //     ],
-        // },
 
         group: ['Spot.id']
     })
@@ -195,7 +164,6 @@ router.get('/:spotId', async (req, res) => {
         include: [{
             model: SpotImage,
             attributes: ['id', 'url', 'preview'],
-            // where: { spotId: spotId }
         },
         {
             model: User,
@@ -212,8 +180,6 @@ router.get('/:spotId', async (req, res) => {
             include: [
                 [sequelize.fn('COUNT', sequelize.col('Reviews.id')), 'numReviews'],
                 [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
-                // [sequelize.col('User'), 'Owner']
-                // async get(instances: Model | Array<Model>, options: object): Promise<Model>
             ]
         }
     })
@@ -221,53 +187,10 @@ router.get('/:spotId', async (req, res) => {
     res.json(spot)
 })
 
-//     group: ['Spot.id']w
-// })
-// res.json(spot)
-// router.get('/', async (req, res) => {
-//     const spots = await Spot.findAll({
 
-//         include: [{
-//             model: Review,
-//             attributes: [], //to disappear//
-//         },
-//         {
-//             model: SpotImage,
-//             attributes: [],
-//             where: {
-//                 preview: true
-//             },
-//         }
-//         ],
-//         attributes: {
-//             include: [
-//                 [
-//                     sequelize.fn('AVG', sequelize.col('Reviews.stars')),
-//                     'avgRating'
-//                 ],
-//                 [
-//                     sequelize.col('SpotImages.url'),
-//                     'previewImage'
-//                 ]
-//             ],
-//         },
+/////  GET ^///////  GET ^ ////// GET  ^ ///// GET  ^ ///////  GET ^ //////  GET ^/////
 
-//         group: ['Spot.id']
-//     })
-//     res.json({ Spots: spots })
-// })
-///// /////// ^ ////// ^ ///// ^ /////// ^ //////  GETS ///// /////// ////// ///// /////// ////// ///// /////// ////// ///// /////// ////// /////
-// {
-//     'address': 'aaa123 Disney Lane',
-//     'city': 'San Francisco',
-//     'state': 'California',
-//     'country': 'United States of America',
-//     'lat': 37.7645358,
-//     'lng': -122.4730327,
-//     'name': 'App Academy',
-//     'description': 'Place where web developers are created',
-//     'price': 123
-//   }
+/////  POST v ///////  POST v ////// POST  v ///// POST  v ///////  POST v //////  POST v/////
 router.post('/:spotId/images',
     requireAuth,
     async (req, res) => {
@@ -334,8 +257,6 @@ router.post('/:spotId/reviews',
         for (let re of currReviews) {
             if (re.userId === userId) {
                 const err = new Error('User already has a review for this spot')
-
-                // err.message = 'User already has a review for this spot'
                 err.status = 403
                 throw err
 
@@ -352,24 +273,6 @@ router.post('/:spotId/reviews',
             res.status(201)
             res.json(newReview)
         }
-
-        // if (!review && !stars) {
-        //     err = new Error('Validation Error')
-        //     err.status = 400
-        //     err.errors = {
-        //         'review': 'Review text is required',
-        //         'stars': 'Stars must be an integer from 1 to 5',
-        //     }
-        //     throw err
-        // }
-        // if (!theSpot) {
-        //     const err = new Error('Spot couldn`t be found');
-        //     err.status = 404
-        //     throw err
-
-        // }
-
-
     }
 )
 router.post('/:spotId/bookings',
@@ -413,18 +316,6 @@ router.post('/:spotId/bookings',
                 throw err
             }
         }
-        // if (theSpot.ownerId === userId) {
-        //     const newBook = await Booking.create({
-        //         spotId,
-        //         userId,
-        //         startDate,
-        //         endDate
-        //     })
-
-
-
-        //     res.json(newBook)
-        // } else {
         const newBook = await Booking.create({
             spotId,
             userId,
@@ -432,44 +323,15 @@ router.post('/:spotId/bookings',
             endDate
         })
         res.json(newBook)
-        // }
-
-
-
-
-        // console.log(newBook)
     })
 
 
 router.post('/',
     requireAuth,
     async (req, res, next) => {
-
-        // for (let x in req) {
-        //     console.log(x)
-        // }
-
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         const user = req.user.id
-        // for (let x in req.body) {
-        //     if (req.body.x == undefined) {
-        //         let er = new Error('Validation Error')
-        //         er.status = 400
-        //         er.errors = {
-        //             'address': 'Street address is required',
-        //             'city': 'City is required',
-        //             'state': 'State is required',
-        //             'country': 'Country is required',
-        //             'lat': 'Latitude is not valid',
-        //             'lng': 'Longitude is not valid',
-        //             'name': 'Name must be less than 50 characters',
-        //             'description': 'Description is required',
-        //             'price': 'Price per day is required'
 
-        //         }
-        //         throw er
-        //     }
-        // }
 
         if (address == undefined || city == undefined || state == undefined
             || country == undefined || lat == undefined || lng == undefined
@@ -486,10 +348,10 @@ router.post('/',
                 'name': 'Name must be less than 50 characters',
                 'description': 'Description is required',
                 'price': 'Price per day is required'
-
             }
             throw er
         }
+
         const newSpot = await Spot.create({
             ownerId: user,
             address, city, state, country, lat, lng, name, description, price
@@ -500,12 +362,12 @@ router.post('/',
         // }
     },
 )
+/////  POST ^///////  POST ^ ////// POST  ^ ///// POST  ^ ///////  POST ^ //////  POST ^/////
 
+/////  PUT v ///////  PUT v ////// PUT  v ///// PUT  v ///////  PUT v //////  PUT v/////
 
-// )
 router.put('/:spotId',
     requireAuth,
-    // restoreUser,
     async (req, res) => {
         const { spotId } = req.params
         const user = req.user.id
@@ -548,14 +410,6 @@ router.put('/:spotId',
             // }
             throw er
         }
-
-        // if (!theSpot) {
-        //     let er = new Error('Spot couldn`t be found')
-        //     er.status = 404
-        //     throw er
-        // }
-        // next(er)
-
         theSpot.address = address
         theSpot.city = city
         theSpot.state = state
@@ -569,41 +423,9 @@ router.put('/:spotId',
         res.json(theSpot)
     }
 )
+/////  PUT ^///////  PUT ^ ////// PUT  ^ ///// PUT  ^ ///////  PUT ^ //////  PUT ^/////
 
-
-
-
-
-
-
-
-// router.post(
-//     '/',
-//     validateSignup,
-//     async (req, res) => {
-//         const { address, city, state, country, lat, lng, name, description, price } = req.body;
-
-//         const spot = await User.signup({ firstName, lastName, email, username, password });
-
-//         await setTokenCookie(res, user);
-
-//         return res.json({
-//             user,
-//         });
-//     }
-// );
-// {
-//     'address': 'aaa123 Disney Lane',
-//     'city': 'San Francisco',
-//     'state': 'California',
-//     'country': 'United States of America',
-//     'lat': 37.7645358,
-//     'lng': -122.4730327,
-//     'name': 'App Academy',
-//     'description': 'Place where web developers are created',
-//     'price': 123
-//   }
-
+/////  DELETE v ///////  DELETE v  ////// DELETE   v ///// DELETE   v ///////  DELETE v  //////  DELETE v /////
 router.delete('/:spotid',
     requireAuth,
     async (req, res) => {
