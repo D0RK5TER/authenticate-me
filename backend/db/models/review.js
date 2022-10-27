@@ -13,12 +13,13 @@ module.exports = (sequelize, DataTypes) => {
     static async getRating(thisId) {
       const revs = await Review.findAll({
         where: { spotId: thisId },
-        attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'rat']] }
+        attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'rat']] },
+        group: ['Review.id']
       })
       if (!revs) return new Error('No reviews yet!')
-      console.log(revs)
       return (revs[0].dataValues.rat / revs.length)
     }
+
     // static async getUser
     static async getNumRevs(thisId) {
       let num = await Review.findAndCountAll({
@@ -26,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
       })
       return num.count
     }
+
+
     static associate(models) {
       // define association here
       Review.hasMany(models.ReviewImage, { foreignKey: 'reviewId' })
