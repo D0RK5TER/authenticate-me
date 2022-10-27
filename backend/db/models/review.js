@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'rat']] },
         group: ['Review.id']
       })
-      if (!revs) return new Error('No reviews yet!')
+      if (!revs.length) return 0
       // console.log(revs)
       return (revs[0].dataValues.rat / revs.length)
     }
