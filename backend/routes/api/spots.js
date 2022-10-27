@@ -63,40 +63,46 @@ router.get('/:spotId/bookings',
             res.json({ Bookings })
         }
     })
-// include: [
-//         [
-//             sequelize.col('url'),
-//             'previewImage'
-//         ],]
+
 router.get('/current',
     requireAuth,
     async (req, res) => {
         const user = req.user.id
-        const spot = await Spot.findAll({
+        const spots = await Spot.findAll({
             where: { ownerId: user },
             include: [{
                 model: Review,
-                attributes: [],
+                attributes: ['stars']
             },
             {
                 model: SpotImage,
+                attributes: ['url'],
                 where: {
                     preview: true
                 },
-                attributes: [],
-            },
+                required: false
+            }
             ],
-            attributes: {
-                include: [
-                    [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
-                    [sequelize.col('SpotImages.url'), 'previewImage']
-                ]
-
-            },
-
+        }).then((spa) => {
+            for (let x of spa) {
+                if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
+                let length = 0
+                let sum = 0
+                let revs = x.Reviews
+                for (let j of revs) {
+                    if (j.dataValues.stars) {
+                        let z = j.dataValues.stars
+                        sum += z
+                        length++
+                    }
+                }
+                x.dataValues.avgRating = sum
+                x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+                delete x.dataValues.Reviews
+                delete x.dataValues.SpotImages
+            }
+            res.json({ Spots: spa })
         })
-        res.json({ Spots: spot })
-        // console.log(reviews)
     })
 
 router.get('/', async (req, res) => {
@@ -105,45 +111,44 @@ router.get('/', async (req, res) => {
         include: [{
             model: Review,
             attributes: ['stars']
-            // include: [[sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating']],
         },
         {
             model: SpotImage,
-            // attributes: { include: [[sequelize.col('url'), 'previewImage']] },
             attributes: ['url'],
             where: {
                 preview: true
             },
-            required: false
+            required: false,
+
         }
         ],
-    })
-
-    for (let x of spots) {
-        let sum = 0
-
-        for (let j of x.dataValues.Reviews) {
-            sum += j.stars
+    }).then((spa) => {
+        for (let x of spa) {
+            if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
+            let length = 0
+            let sum = 0
+            let revs = x.Reviews
+            for (let j of revs) {
+                if (j.dataValues.stars) {
+                    let z = j.dataValues.stars
+                    sum += z
+                    length++
+                }
+            }
+            x.dataValues.avgRating = sum
+            x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+            delete x.dataValues.Reviews
+            delete x.dataValues.SpotImages
         }
-        x.dataValues.avgRating = sum
-
-        x.dataValues.previewImage = x.dataValues.SpotImages[0].url
-        delete x.dataValues.SpotImages
-        delete x.dataValues.Reviews
-
-    }
-    // spots.save
-
-
-
-    res.json({ Spots: spots })
+        res.json({ Spots: spa })
+    })
 })
+
 
 router.get('/:spotId', async (req, res) => {
     const { spotId } = req.params
 
     const spotCheck = await Spot.findByPk(spotId)
-
     if (!spotCheck) {
         err = new Error('Spot couldn`t be found')
         err.status = 404
@@ -155,6 +160,7 @@ router.get('/:spotId', async (req, res) => {
         include: [{
             model: SpotImage,
             attributes: ['id', 'url', 'preview'],
+            order: ['preview']
         },
         {
             model: User,
@@ -164,19 +170,28 @@ router.get('/:spotId', async (req, res) => {
         },
         {
             model: Review,
-            where: { spotId: spotId },
-            attributes: []
-        },],
-        attributes: {
-            include: [
-                [sequelize.fn('COUNT', sequelize.col('Reviews.id')), 'numReviews'],
-                [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
-            ]
+            attributes: ['stars']
+        },]
+    }).then((x) => {
+        let sum = 0
+        let length = 0
+        console.log(x)
+        for (let r of x.Reviews) {
+            // console.log(r)
+            sum += r.dataValues.stars
+            length++
         }
+        x.dataValues.avgRating = sum / length
+        delete x.dataValues.Reviews
+        x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+        console.log(x)
+        res.json(x)
     })
-
-    res.json(spot)
 })
+
+
+
+
 
 
 /////  GET ^///////  GET ^ ////// GET  ^ ///// GET  ^ ///////  GET ^ //////  GET ^/////
