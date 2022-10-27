@@ -9,6 +9,7 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { urlencoded } = require('express');
 const e = require('express');
 const spotimage = require('../../db/models/spotimage');
+const { response } = require('../../app');
 
 const router = express.Router();
 
@@ -68,86 +69,107 @@ router.get('/current',
     requireAuth,
     async (req, res) => {
         const user = req.user.id
-        const spots = await Spot.findAll({
-            where: { ownerId: user },
-            include: [{
-                model: Review,
-                attributes: ['stars']
-            },
-            {
-                model: SpotImage,
-                attributes: ['url'],
-                where: {
-                    preview: true
-                },
-                required: false
+        const spots = await Spot.findAll({ where: { ownerId: user } })
+        if (!spots[0]) {
+            let err = new Error('You dont got any spots sorry, prolly logged into wrong person')
+            err.status = 666
+            throw err
+        }
+        else {
+            for (let s of spots) {
+                console.log(s.dataValues.id)
+                s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
+                s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
             }
-            ],
-        }).then((spa) => {
-
-            for (let x of spa) {
-                if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
-                x.dataValues.previewImage = x.SpotImages[0].dataValues.url
-                let sum = 0
-                let length = 0
-                let revs = x.Reviews
-
-                for (let j of revs) {
-                    // console.log(j)
-                    if (j.dataValues.stars) {
-                        let z = j.dataValues.stars
-                        sum += z
-                        length++
-                    }
-                }
-                // console.log(x)
-                x.dataValues.avgRating = sum / length
-                delete x.dataValues.Reviews
-                delete x.dataValues.SpotImages
-            }
-            res.json({ Spots: spa })
-        })
+            res.json({ Spots: spots })
+        }
     })
+//         where: { ownerId: user },
+//         include: [{
+//             model: Review,
+//             attributes: ['stars']
+//         },
+//         {
+//             model: SpotImage,
+//             attributes: ['url'],
+//             where: {
+//                 preview: true
+//             },
+//             required: false
+//         }
+//         ],
+//     }).then((spa) => {
+
+//         for (let x of spa) {
+//             if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
+//             x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+//             let sum = 0
+//             let length = 0
+//             let revs = x.Reviews
+
+//             for (let j of revs) {
+//                 // console.log(j)
+//                 if (j.dataValues.stars) {
+//                     let z = j.dataValues.stars
+//                     sum += z
+//                     length++
+//                 }
+//             }
+//             // console.log(x)
+//             x.dataValues.avgRating = sum / length
+//             delete x.dataValues.Reviews
+//             delete x.dataValues.SpotImages
+//         }
+//         res.json({ Spots: spa })
+//     })
+// })
 
 router.get('/', async (req, res) => {
-
-    const spots = await Spot.findAll({
-        include: [{
-            model: Review,
-            attributes: ['stars']
-        },
-        {
-            model: SpotImage,
-            attributes: ['url'],
-            where: {
-                preview: true
-            },
-            required: false,
-
-        }
-        ],
-    }).then((spa) => {
-        for (let x of spa) {
-            if (x.dataValues == undefined || x.SpotImages == undefined || x.Reviews == undefined) continue
-            let length = 0
-            let sum = 0
-            let revs = x.Reviews
-            for (let j of revs) {
-                // console.log(j)
-                if (j.dataValues.stars) {
-                    let z = j.dataValues.stars
-                    sum += z
-                    length++
-                }
-            }
-            x.dataValues.avgRating = sum
-            x.dataValues.previewImage = x.SpotImages[0].dataValues.url
-            delete x.dataValues.Reviews
-            delete x.dataValues.SpotImages
-        }
-        res.json({ Spots: spa })
-    })
+    const spots = await Spot.findAll()
+    for (let s of spots) {
+        console.log(s.dataValues.id)
+        s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
+        s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
+    }
+    res.json({ Spots: spots })
 })
+/////////
+//     const spots = await Spot.findAll({
+//         include: [{
+//             model: Review,
+//             attributes: ['stars']
+//         },
+//         {
+//             model: SpotImage,
+//             attributes: ['url'],
+//             where: {
+//                 preview: true
+//             },
+//             required: false,
+
+//         }
+//         ],
+//     }).then((spa) => {
+//         for (let x of spa) {
+//             if (x.dataValues == undefined || x.SpotImages == undefined || x.Reviews == undefined) continue
+//             let length = 0
+//             let sum = 0
+//             let revs = x.Reviews
+//             for (let j of revs) {
+//                 if (j.dataValues.stars) {
+//                     let z = j.dataValues.stars
+//                     sum += z
+//                     length++
+//                 }
+//             }
+//             x.dataValues.avgRating = sum
+//             if (x.SpotImages[0].dataValues.url) x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+//             delete x.dataValues.Reviews
+//             delete x.dataValues.SpotImages
+//         }
+//         res.json({ Spots: spa })
+//     })
+// })
 
 
 router.get('/:spotId', async (req, res) => {
