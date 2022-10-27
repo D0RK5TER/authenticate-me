@@ -126,61 +126,62 @@ router.get('/', async (req, res) => {
     for (let x of spots) {
 
         const revs = await Review.findAll({
-            // where: { spotId: x.id },
-            // attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] }
+            where: { spotId: x.id },
+            attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] }
         })
-        // x.dataValues.avgRating = revs[0].dataValues.avg
-        // const img = await SpotImage.findOne({
-        //     where: { spotId: x.id },
-        //     attributes: ['url']
-        // })
-        x.dataValues.previewImage = revs.dataValues
-
-
-
+        x.dataValues.avgRating = revs[0].avg
+        const img = await SpotImage.findOne({
+            where: { spotId: x.id },
+            attributes: ['url']
+        })
+        x.dataValues.previewImage = img.url
 
     }
+    // spots.save
+
+
+
     res.json(spots)
 })
 
-// router.get('/:spotId', async (req, res) => {
-//     const { spotId } = req.params
+router.get('/:spotId', async (req, res) => {
+    const { spotId } = req.params
 
-//     const spotCheck = await Spot.findByPk(spotId)
+    const spotCheck = await Spot.findByPk(spotId)
 
-//     if (!spotCheck) {
-//         err = new Error('Spot couldn`t be found')
-//         err.status = 404
-//         throw err
-//     }
+    if (!spotCheck) {
+        err = new Error('Spot couldn`t be found')
+        err.status = 404
+        throw err
+    }
 
-//     const spot = await Spot.findOne({
-//         where: { id: spotId },
-//         include: [{
-//             model: SpotImage,
-//             attributes: ['id', 'url', 'preview'],
-//         },
-//         {
-//             model: User,
-//             as: 'Owner',
-//             where: { id: spotId },
-//             attributes: ['id', 'firstName', 'lastName'],
-//         },
-//         {
-//             model: Review,
-//             where: { spotId: spotId },
-//             attributes: []
-//         },],
-//         attributes: {
-//             include: [
-//                 [sequelize.fn('COUNT', sequelize.col('Reviews.id')), 'numReviews'],
-//                 [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
-//             ]
-//         }
-//     })
+    const spot = await Spot.findOne({
+        where: { id: spotId },
+        include: [{
+            model: SpotImage,
+            attributes: ['id', 'url', 'preview'],
+        },
+        {
+            model: User,
+            as: 'Owner',
+            where: { id: spotId },
+            attributes: ['id', 'firstName', 'lastName'],
+        },
+        {
+            model: Review,
+            where: { spotId: spotId },
+            attributes: []
+        },],
+        attributes: {
+            include: [
+                [sequelize.fn('COUNT', sequelize.col('Reviews.id')), 'numReviews'],
+                [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
+            ]
+        }
+    })
 
-//     res.json(spot)
-// })
+    res.json(spot)
+})
 
 
 /////  GET ^///////  GET ^ ////// GET  ^ ///// GET  ^ ///////  GET ^ //////  GET ^/////
