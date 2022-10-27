@@ -91,7 +91,7 @@ router.get('/current',
                 let sum = 0
                 let length = 0
                 let revs = x.Reviews
-                
+
                 for (let j of revs) {
                     // console.log(j)
                     if (j.dataValues.stars) {
@@ -128,11 +128,12 @@ router.get('/', async (req, res) => {
         ],
     }).then((spa) => {
         for (let x of spa) {
-            if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
+            if (x.dataValues == undefined || x.SpotImages == undefined || x.Reviews == undefined) continue
             let length = 0
             let sum = 0
             let revs = x.Reviews
             for (let j of revs) {
+                // console.log(j)
                 if (j.dataValues.stars) {
                     let z = j.dataValues.stars
                     sum += z
