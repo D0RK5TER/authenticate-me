@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static async getSpot(thisId) {
       let spot = await Spot.findOne({
         where: { id: thisId },
-        include: 'SpotImages'
+        include: [{ model: SpotImage, required: false }]
       })
       // console.log(spot)
       return spot
