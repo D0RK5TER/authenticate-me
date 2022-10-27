@@ -34,6 +34,15 @@ router.post(
     async (req, res) => {
         const { firstName, lastName, email, password, username } = req.body;
 
+        // if (!User.findOne({ where: { email } })) {
+        //     const err = new Error('User Already Exists');
+        //     err.status = 403;
+        //     err.title = 'User Already Exists';
+        //     err.errors = ['User Already Exists.'];
+        //     return next(err);
+        // }
+        ///////IS IT NEEDED ABOVE^^^^^s
+
         const user = await User.signup({ firstName, lastName, email, username, password });
 
         await setTokenCookie(res, user);
@@ -43,14 +52,6 @@ router.post(
         });
     }
 );      //////^^^^^^^^^
-// if (!User.findOne({ where: { email } })) {
-//     const err = new Error('User Already Exists');
-//     err.status = 403;
-//     err.title = 'User Already Exists';
-//     err.errors = ['User Already Exists.'];
-//     return next(err);
-// }
-///////IS IT NEEDED ABOVE^^^^^
 
 
 ////BELOW IS FOR TESTING NO ONE SHOULD BE ABLE TO GET ALL USERS//////

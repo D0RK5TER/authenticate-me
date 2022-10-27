@@ -39,7 +39,13 @@ module.exports = (sequelize, DataTypes) => {
       });
       return await User.scope('currentUser').findByPk(user.id);
     }
-
+    static async getOwner(thisId) {
+      let owner = await User.findOne({
+        where: { id: thisId },
+        attributes: ['id', 'firstName', 'lastName']
+      })
+      return owner
+    }
     static associate(models) {
       User.hasMany(models.Review, { foreignKey: 'userId' })
       User.hasMany(models.Booking, { foreignKey: 'userId' })

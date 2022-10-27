@@ -7,13 +7,15 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
 
-    // static async getSpotImgs(thisId) {
-    //   let imgs = await SpotImages.findAll({
-    //     where: { spotId: thisId },
-    //     attributes: ['id', 'url', 'preview']
-    //   })
-    //   return imgs
-    // }
+    static async getSpot(thisId) {
+      let spot = await Spot.findOne({
+        where: { id: thisId },
+        include: 'SpotImages'
+      })
+      // console.log(spot)
+      return spot
+    }
+
     // static async getPreview(thisId) {
     //   let imgURL = await SpotImage.findOne({
     //     where: { spotId: thisId, preview: true },
@@ -21,13 +23,13 @@ module.exports = (sequelize, DataTypes) => {
     //   })
     //   return imgURL
     // }
-    static async getOwner(thisId) {
-      let owner = await User.findOne({
-        where: { id: thisId },
-        attributes: ['id', 'firstName', 'lastName']
-      })
-      return owner
-    }
+    // static async getOwner(thisId) {
+    //   let owner = await User.findOne({
+    //     where: { id: thisId },
+    //     attributes: ['id', 'firstName', 'lastName']
+    //   })
+    //   return owner
+    // }
     // static async getRating(thisId) {
     //   const revs = await Review.findAll({
     //     where: { spotId: thisId },

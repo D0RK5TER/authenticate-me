@@ -34,44 +34,21 @@ router.get('/current',
     requireAuth,
     async (req, res) => {
         const user = req.user.id
-        ////get all the reveiews for current user/////
         const Reviews = await Review.findAll({
             where: { userId: user },
-            include: [{ model: ReviewImage, attributes: ['id', 'url'] }]
+            include: [{ model: ReviewImage, attributes: ['id', 'url'] }, { model: User, attributes: ['id', 'firstName', 'lastName'] }]
         })
-        //loop through the array of reviews
-        for (let rev of Reviews) {
-            //find the user of review
-            const user = await User.findOne({
-                where: { id: rev.userId },
-                attributes: ['id', 'firstName', 'lastName']
-            })
-            //find the spot of the review
+        for (let review of Reviews) {
+            const rev = review.dataValues
             const spot = await Spot.findOne({
                 where: { id: rev.spotId },
-                include: [
-                    {
-                        model: SpotImage,
-                        attributes: [],
-                        where: {
-                            preview: true
-                        },
-                    }],
-                //change the stupid col name
-                attributes: {
-                    include: [
-                        [
-                            sequelize.col('SpotImages.url'),
-                            'previewImage'
-                        ]
-                    ],
-                    exclude: ['createdAt', 'updatedAt']
-                },
+                include: [{ model: SpotImage, attributes: [] }],
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+
             })
-            //assign the user and spot we awaited to each review obj
-            rev.dataValues.User = user
-            rev.dataValues.Spot = spot
-            console.log(rev)
+            spot.dataValues.previewImage = await SpotImage.getPreview(spot.id)
+
+            rev.Spot = spot
         }
 
         res.json({ Reviews })
@@ -86,6 +63,7 @@ router.post('/:reviewId/images',
 
         const rev = await Review.findOne({
             where: { id: reviewId },
+
         })
 
         if (!rev) {
@@ -98,27 +76,19 @@ router.post('/:reviewId/images',
             err.status = 403
             throw err
         }
-        const imgs = await ReviewImage.findAll({
-            where: { reviewId: reviewId }
-        })
-        console.log(imgs.length)
-        if (imgs.length >= 10) {
-            const err = new Error('Maximum number of images for this resource was reached');
-            err.status = 403
-            throw err
+        // console.log(re)
+        if (rev.dataValues.ReviewImages) {
+            if (rev.dataValues.ReviewImages.length >= 10) {
+                const err = new Error('Maximum number of images for this resource was reached');
+                err.status = 403
+                throw err
+            }
         }
-
-
         const newAdd = await ReviewImage.create({
             reviewId,
             url
         })
-        const returnAdd = await ReviewImage.findOne({
-            where: { id: newAdd.id },
-            attributes: ['id', 'url']
-        })
-
-        res.json(returnAdd)
+        res.json({ id: newAdd.id, url: newAdd.url })
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 router.put('/:reviewId',
@@ -129,6 +99,16 @@ router.put('/:reviewId',
         const user = req.user.id
 
         const theRev = await Review.findByPk(reviewId)
+        if (!theRev) {
+            const err = new Error('Review couldn`t be found')
+            err.status = 404
+            throw err
+        }
+        if (theRev.dataValues.userId !== user) {
+            const err = new Error('Forbidden');
+            err.status = 403
+            throw err
+        }
 
         if (!review && !stars) {
             const err = new Error('Validation error')
@@ -138,20 +118,13 @@ router.put('/:reviewId',
                 'stars': 'Stars must be an integer from 1 to 5',
             }
             throw err
-        } else if (!theRev) {
-            const err = new Error('Review couldn`t be found')
-            err.status = 404
-            throw err
-        } else if (theRev.userId !== user) {
-            const err = new Error('Forbidden');
-            err.status = 403
-            throw err
         }
-        else {
-            theRev.review = review
-            theRev.stars = stars
-            res.json(theRev)
-        }
+
+        theRev.dataValues.review = review
+        theRev.dataValues.stars = stars
+        await theRev
+        res.json(theRev)
+
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 

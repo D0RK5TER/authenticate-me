@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class SpotImage extends Model {
     static async getSpotImgs(thisId) {
-      let imgs = await SpotImages.findAll({
+      let imgs = await SpotImage.findAll({
         where: { spotId: thisId },
         attributes: ['id', 'url', 'preview']
       })

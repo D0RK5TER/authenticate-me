@@ -33,6 +33,30 @@ router.get('/:spotId/reviews', async (req, res) => {
     })
     res.json({ Reviews: reviews })
 })
+
+// router.get('/:spotId/reviews', async (req, res) => {
+//     const { spotId } = req.params
+//     const theSpot = await Spot.findByPk(spotId)
+//     if (!theSpot) {
+//         err = new Error('Spot couldn`t be found')
+//         err.status = 404
+//         throw err
+//     }
+//     const reviews = await Review.findAll({
+//         where: { spotId: spotId },
+//     })
+//     for (let s of reviews) {
+//         s.dataValues.User = await User.getOwner(s.dataValues.id)
+//         s.dataValues.Spot = theSpot
+//     }
+
+//     res.json(reviews)
+// })
+
+
+
+
+
 router.get('/:spotId/bookings',
     requireAuth,
     async (req, res) => {
@@ -84,92 +108,16 @@ router.get('/current',
             res.json({ Spots: spots })
         }
     })
-//         where: { ownerId: user },
-//         include: [{
-//             model: Review,
-//             attributes: ['stars']
-//         },
-//         {
-//             model: SpotImage,
-//             attributes: ['url'],
-//             where: {
-//                 preview: true
-//             },
-//             required: false
-//         }
-//         ],
-//     }).then((spa) => {
 
-//         for (let x of spa) {
-//             if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
-//             x.dataValues.previewImage = x.SpotImages[0].dataValues.url
-//             let sum = 0
-//             let length = 0
-//             let revs = x.Reviews
-
-//             for (let j of revs) {
-//                 // console.log(j)
-//                 if (j.dataValues.stars) {
-//                     let z = j.dataValues.stars
-//                     sum += z
-//                     length++
-//                 }
-//             }
-//             // console.log(x)
-//             x.dataValues.avgRating = sum / length
-//             delete x.dataValues.Reviews
-//             delete x.dataValues.SpotImages
-//         }
-//         res.json({ Spots: spa })
-//     })
-// })
 
 router.get('/', async (req, res) => {
     const spots = await Spot.findAll()
     for (let s of spots) {
-        console.log(s.dataValues.id)
         s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
         s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
     }
     res.json({ Spots: spots })
 })
-/////////
-//     const spots = await Spot.findAll({
-//         include: [{
-//             model: Review,
-//             attributes: ['stars']
-//         },
-//         {
-//             model: SpotImage,
-//             attributes: ['url'],
-//             where: {
-//                 preview: true
-//             },
-//             required: false,
-
-//         }
-//         ],
-//     }).then((spa) => {
-//         for (let x of spa) {
-//             if (x.dataValues == undefined || x.SpotImages == undefined || x.Reviews == undefined) continue
-//             let length = 0
-//             let sum = 0
-//             let revs = x.Reviews
-//             for (let j of revs) {
-//                 if (j.dataValues.stars) {
-//                     let z = j.dataValues.stars
-//                     sum += z
-//                     length++
-//                 }
-//             }
-//             x.dataValues.avgRating = sum
-//             if (x.SpotImages[0].dataValues.url) x.dataValues.previewImage = x.SpotImages[0].dataValues.url
-//             delete x.dataValues.Reviews
-//             delete x.dataValues.SpotImages
-//         }
-//         res.json({ Spots: spa })
-//     })
-// })
 
 
 router.get('/:spotId', async (req, res) => {
@@ -181,40 +129,15 @@ router.get('/:spotId', async (req, res) => {
         err.status = 404
         throw err
     }
-
-    const spot = await Spot.findOne({
-        where: { id: spotId },
-        include: [{
-            model: SpotImage,
-            attributes: ['id', 'url', 'preview'],
-            order: ['preview']
-        },
-        {
-            model: User,
-            as: 'Owner',
-            where: { id: spotId },
-            attributes: ['id', 'firstName', 'lastName'],
-        },
-        {
-            model: Review,
-            attributes: ['stars']
-        },]
-    }).then((x) => {
-        let sum = 0
-        let length = 0
-        console.log(x)
-        for (let r of x.Reviews) {
-            // console.log(r)
-            sum += r.dataValues.stars
-            length++
-        }
-        x.dataValues.avgRating = sum / length
-        delete x.dataValues.Reviews
-        x.dataValues.previewImage = x.SpotImages[0].dataValues.url
-        console.log(x)
-        res.json(x)
-    })
+    // console.log(spotId, spotCheck)
+    spotCheck.dataValues.avgRatingz = await Review.getRating(spotId)
+    spotCheck.dataValues.numReviews = await Review.getNumRevs(spotId)
+    spotCheck.dataValues.SpotImages = await SpotImage.getSpotImgs(spotId)
+    spotCheck.dataValues.Owner = await User.getOwner(spotId)
+    // await
+    res.json(spotCheck)
 })
+
 
 
 
@@ -237,7 +160,8 @@ router.post('/:spotId/images',
             throw err
         }
         const user = req.user.id
-        if (theSpot.ownerId == user) {
+        // console.log(theSpot.dataValues.ownerId, user)
+        if (theSpot.dataValues.ownerId !== user) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
@@ -317,6 +241,7 @@ router.post('/:spotId/bookings',
 
         const start = new Date(startDate)
         const end = new Date(endDate)
+
         const theSpot = await Spot.findByPk(spotId)
 
         if (end <= start) {
@@ -333,11 +258,11 @@ router.post('/:spotId/bookings',
             er.status = 404
             throw er
         }
-        const curBoo = await Booking.findAll({})
+        const curBoo = await Booking.findAll({where:{spotId:spotId}})
 
         for (let boo of curBoo) {
-            let startCheck = new Date(boo.startDate).valueOf()
-            let endCheck = new Date(boo.endDate).valueOf()
+            let startCheck = new Date(boo.dataValues.startDate).valueOf()
+            let endCheck = new Date(boo.dataValues.endDate).valueOf()
 
             if (startCheck <= start.valueOf() && start.valueOf() <= endCheck) {
                 const err = new Error('Sorry, this spot is already booked for the specified dates')

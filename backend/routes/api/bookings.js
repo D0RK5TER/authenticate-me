@@ -45,6 +45,7 @@ router.get('/current',
                         where: {
                             preview: true
                         },
+                        required: false
                     }],
 
                 attributes: {
