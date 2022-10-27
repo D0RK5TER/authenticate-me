@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       const revs = await Review.findAll({
         where: { spotId: thisId },
         attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'rat']] },
-        // group: ['Review.id']
+        group: ['Review.id']
       })
       if (!revs) return new Error('No reviews yet!')
       // console.log(revs)
