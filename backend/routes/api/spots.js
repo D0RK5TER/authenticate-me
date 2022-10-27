@@ -102,47 +102,41 @@ router.get('/current',
 router.get('/', async (req, res) => {
 
     const spots = await Spot.findAll({
-        // include: [{
-        //     model: Review,
-        //     attributes: []
-        // }],
-        // {
-        //     model: SpotImage,
-        //     attributes: [],
-        //     where: {
-        //         preview: true
-        //     },
-        //     required: false
-        // }
-        // ],
-        //     attributes: {
-        //         include: [
-        //             [sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating'],
-        //             [sequelize.col('url'), 'previewImage']
-        //         ],
-        //     },
+        include: [{
+            model: Review,
+            attributes: ['stars']
+            // include: [[sequelize.fn('AVG', sequelize.col('Reviews.stars')), 'avgRating']],
+        },
+        {
+            model: SpotImage,
+            // attributes: { include: [[sequelize.col('url'), 'previewImage']] },
+            attributes: ['url'],
+            where: {
+                preview: true
+            },
+            required: false
+        }
+        ],
     })
 
     for (let x of spots) {
+        let sum = 0
 
-        const revs = await Review.findAll({
-            where: { spotId: x.id },
-            attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] },
-            group: ['id']
-        })
-        x.dataValues.avgRating = revs[0].avg
-        const img = await SpotImage.findOne({
-            where: { spotId: x.id },
-            attributes: ['url']
-        })
-        x.dataValues.previewImage = img.url
+        for (let j of x.dataValues.Reviews) {
+            sum += j.stars
+        }
+        x.dataValues.avgRating = sum
+
+        x.dataValues.previewImage = x.dataValues.SpotImages[0].url
+        delete x.dataValues.SpotImages
+        delete x.dataValues.Reviews
 
     }
     // spots.save
 
 
 
-    res.json(spots)
+    res.json({ Spots: spots })
 })
 
 router.get('/:spotId', async (req, res) => {
