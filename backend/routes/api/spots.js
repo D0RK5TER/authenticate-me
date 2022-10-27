@@ -95,13 +95,13 @@ router.get('/current',
         const user = req.user.id
         const spots = await Spot.findAll({ where: { ownerId: user } })
         if (!spots[0]) {
-            let err = new Error('You dont got any spots sorry, prolly logged into wrong person')
-            err.status = 666
-            throw err
+            // let err = new Error('You dont got any spots sorry, prolly logged into wrong person')
+            // err.status = 666
+            // throw err
+            res.json({ Spots: [] })
         }
         else {
             for (let s of spots) {
-                console.log(s.dataValues.id)
                 s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
                 s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
             }
@@ -258,7 +258,7 @@ router.post('/:spotId/bookings',
             er.status = 404
             throw er
         }
-        const curBoo = await Booking.findAll({where:{spotId:spotId}})
+        const curBoo = await Booking.findAll({ where: { spotId: spotId } })
 
         for (let boo of curBoo) {
             let startCheck = new Date(boo.dataValues.startDate).valueOf()
