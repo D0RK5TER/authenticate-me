@@ -84,20 +84,24 @@ router.get('/current',
             }
             ],
         }).then((spa) => {
+
             for (let x of spa) {
                 if (!(x.dataValues && x.SpotImages && x.Reviews)) continue
-                let length = 0
+                x.dataValues.previewImage = x.SpotImages[0].dataValues.url
                 let sum = 0
+                let length = 0
                 let revs = x.Reviews
+                
                 for (let j of revs) {
+                    // console.log(j)
                     if (j.dataValues.stars) {
                         let z = j.dataValues.stars
                         sum += z
                         length++
                     }
                 }
-                x.dataValues.avgRating = sum
-                x.dataValues.previewImage = x.SpotImages[0].dataValues.url
+                // console.log(x)
+                x.dataValues.avgRating = sum / length
                 delete x.dataValues.Reviews
                 delete x.dataValues.SpotImages
             }
