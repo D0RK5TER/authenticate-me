@@ -13,11 +13,13 @@ module.exports = (sequelize, DataTypes) => {
     }
     static async getPreview(thisId) {
       let imgURL = await SpotImage.findOne({
-        where: { spotId: thisId, preview: true },
-        attributes: ['url']
+        where: { spotId: thisId },
       })
-      return imgURL.url
+      // console.log(imgURL)
+      if (!imgURL) return 'none'
+      else return imgURL.url
     }
+
     static associate(models) {
       SpotImage.belongsTo(models.Spot, { foreignKey: 'spotId' })
 

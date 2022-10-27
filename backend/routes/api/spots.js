@@ -102,6 +102,7 @@ router.get('/current',
         }
         else {
             for (let s of spots) {
+                // console.log(s)
                 s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
                 s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
             }
