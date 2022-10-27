@@ -127,7 +127,8 @@ router.get('/', async (req, res) => {
 
         const revs = await Review.findAll({
             where: { spotId: x.id },
-            attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] }
+            attributes: { include: [[sequelize.fn('AVG', sequelize.col('stars')), 'avg']] },
+            group: ['id']
         })
         x.dataValues.avgRating = revs[0].avg
         const img = await SpotImage.findOne({
