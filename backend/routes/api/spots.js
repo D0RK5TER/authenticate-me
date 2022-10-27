@@ -112,12 +112,24 @@ router.get('/current',
 
 
 router.get('/', async (req, res) => {
-    const spots = await Spot.findAll()
-    for (let s of spots) {
-        s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
-        s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
+    let { page, size } = req.query;
+    if (!page && !size) {
+        const spots = await Spot.findAll({ limit: 20, offset: 0 })
+        for (let s of spots) {
+            s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
+            s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
+        }
+        res.json({ Spots: spots })
+    } else {
+        if (page > 10) page = 10
+        if (size > 20) size = 20
+        const spots = await Spot.findAll({ limit: size, offset: size * (page - 1) })
+        for (let s of spots) {
+            s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
+            s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
+        }
+        res.json({ Spots: spots, page, size })
     }
-    res.json({ Spots: spots })
 })
 
 
@@ -137,6 +149,7 @@ router.get('/:spotId', async (req, res) => {
     spotCheck.dataValues.Owner = await User.getOwner(spotId)
     // await
     res.json(spotCheck)
+
 })
 
 
