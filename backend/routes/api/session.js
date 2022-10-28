@@ -39,7 +39,6 @@ router.post(
                 include: ['id', 'firstName', 'lastName', 'email', 'username'],
             }
         })
-        user.dataValues.token = ''
         res.json(user)
     }
 );

@@ -119,7 +119,7 @@ router.get('/', async (req, res) => {
             s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
             s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
         }
-        res.json({ Spots: spots })
+        res.status(201).json({ Spots: spots })
     } else {
         if (page > 10) page = 10
         if (size > 20) size = 20
@@ -128,7 +128,7 @@ router.get('/', async (req, res) => {
             s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
             s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
         }
-        res.json({ Spots: spots, page, size })
+        res.status(201).json({ Spots: spots, page, size })
     }
 })
 
