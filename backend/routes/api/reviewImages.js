@@ -15,22 +15,25 @@ router.delete('/:imageid',
     async (req, res) => {
         const { imageid } = req.params
         const user = req.user.id
-        const theimage = await ReviewImage.findOne({ where: { id: imageid } })
-
+        const theimage = await ReviewImage.findOne({
+            where: { id: imageid },
+            include: { model: Review }
+        })
         if (!theimage) {
             let er = new Error('Review Image couldn`t be found')
             er.status = 404
             throw er
         }
-        const thereview = await Review.findOne({ where: { id: theimage.reviewId } })
-
-        if (user !== thereview.userId) {
+        let image = JSON.parse(JSON.stringify(theimage))
+        console.log(image.Review.userId, user)
+        // const thereview = await Review.findOne({ where: { id: theimage.reviewId } })
+        if (user !== image.Review.userId) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
         }
         else {
-            await theimage.destroy()
+            theimage.destroy()
 
             res.json({
                 'message': 'Successfully deleted',

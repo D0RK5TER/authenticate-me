@@ -15,45 +15,32 @@ const router = express.Router();
 
 router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params
-    const theSpot = await Spot.findByPk(spotId)
-    if (!theSpot) {
+    const Reviews = await Spot.findAll({
+        where: { id: spotId },
+        include: [
+            {
+                model: Review,
+                include: [{
+                    model: ReviewImage,
+                    attributes: ['id', 'url']
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'firstName', 'lastName']
+                }],
+
+            },],
+
+        attributes: []
+
+    })
+    if (!Reviews[0]) {
         err = new Error('Spot couldn`t be found')
         err.status = 404
         throw err
     }
-    const reviews = await Review.findAll({
-        where: { spotId: spotId },
-        include: [{
-            model: User,
-            attributes: ['id', 'firstName', 'lastName']
-        }, {
-            model: ReviewImage,
-            attributes: ['id', 'url']
-        }],
-    })
-    res.json({ Reviews: reviews })
+    res.json(Reviews[0])
 })
-
-// router.get('/:spotId/reviews', async (req, res) => {
-//     const { spotId } = req.params
-//     const theSpot = await Spot.findByPk(spotId)
-//     if (!theSpot) {
-//         err = new Error('Spot couldn`t be found')
-//         err.status = 404
-//         throw err
-//     }
-//     const reviews = await Review.findAll({
-//         where: { spotId: spotId },
-//     })
-//     for (let s of reviews) {
-//         s.dataValues.User = await User.getOwner(s.dataValues.id)
-//         s.dataValues.Spot = theSpot
-//     }
-
-//     res.json(reviews)
-// })
-
-
 
 
 
@@ -62,93 +49,133 @@ router.get('/:spotId/bookings',
     async (req, res) => {
         const { spotId } = req.params
         const user = req.user.id
-        // const spat = await Spot.findByPk(spotId)
-        const spat = await Spot.findOne({ where: { id: spotId } })
-        if (!spat) {
+        let bookings = await Booking.findAll({
+            where: { spotId: spotId },
+            include: [
+                { model: Spot, raw: true, attributes: ['ownerId'] },
+                { model: User, raw: true, }
+            ],
+        })
+        if (!bookings[0]) {
             let er = new Error('Spot couldn`t be found')
             er.status = 404
             throw er
         }
-        if (spat.ownerId == user) {
-            const Bookings = await Booking.findAll({
-                where: { spotId: spotId },
-            })
-            for (let x of Bookings) {
-                x.dataValues['User'] = await User.findOne({
-                    where: { id: x.dataValues.userId },
-                    attributes: { exclude: ['username'] }
-                })
+        bookings = JSON.parse(JSON.stringify(bookings))
+        console.log(bookings[0].Spot.ownerId, user)
+        if (bookings[0].Spot.ownerId === user) {
+            for (let b of bookings) {
+                b.id = +spotId
+                delete b.User.username
+                delete b.Spot
             }
-            res.json({ Bookings })
         } else {
-            const Bookings = await Booking.findAll({
-                where: { spotId: spotId },
-                attributes: { exclude: ['createdAt', 'updatedAt', 'id', 'userId'] }
-            })
-            res.json({ Bookings })
+            for (let b of bookings) {
+                let c = {}
+                console.log(b)
+                delete b.userId
+                delete b.createdAt
+                delete b.updatedAt
+                delete b.User
+                delete b.Spot
+            }
         }
+        res.json({ bookings })
+
     })
 
 router.get('/current',
     requireAuth,
     async (req, res) => {
         const user = req.user.id
-        const spots = await Spot.findAll({ where: { ownerId: user } })
-        if (!spots[0]) {
-            // let err = new Error('You dont got any spots sorry, prolly logged into wrong person')
-            // err.status = 666
-            // throw err
-            res.json({ Spots: [] })
+        let spots = await Spot.findAll({
+            where: { ownerId: user },
+            include: [
+                { model: Review, required: false, raw: true, required: false },
+                { model: SpotImage, required: false, raw: true, where: { preview: true }, required: false }
+            ],
+            // raw: true,
+            // group: [ 'id', 'SpotImages', 'Review.stars']
+        })
+        spots = JSON.parse(JSON.stringify(spots))
+        for (let spa of spots) {
+            spa.avgRating = Review.getRating(spa.Reviews)
+            if (spa.SpotImages[0]) {
+                spa.previewImage = spa.SpotImages[0].url
+            } else spa.previewImage = 'No preview yet'
+            console.log(spa)
+            delete spa.Reviews
+            delete spa.SpotImages
+            console.log(spa)
+            spa = spa
         }
-        else {
-            for (let s of spots) {
-                // console.log(s)
-                s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
-                s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
-            }
-            res.json({ Spots: spots })
-        }
+        res.status(201).json(spots)
     })
-
-
 router.get('/', async (req, res) => {
     let { page, size } = req.query;
-    if (!page && !size) {
-        const spots = await Spot.findAll({ limit: 20, offset: 0 })
-        for (let s of spots) {
-            s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
-            s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
-        }
-        res.status(201).json({ Spots: spots })
-    } else {
-        if (page > 10) page = 10
-        if (size > 20) size = 20
-        const spots = await Spot.findAll({ limit: size, offset: size * (page - 1) })
-        for (let s of spots) {
-            s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
-            s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
-        }
-        res.status(201).json({ Spots: spots, page, size })
+    // console.log(hey)
+    const spots = await Spot.findAll({
+        include: [
+            { model: Review, required: false, raw: true, },
+            { model: SpotImage, required: false, raw: true }
+        ],
+        // raw: true,
+        // group: [ 'id', 'SpotImages', 'Review.stars']
+    })
+    for (let spa of spots) {
+        // console.log(spa)
+        spa.Reviews = JSON.parse(JSON.stringify(spa.Reviews))
+        spa.SpotImages = JSON.parse(JSON.stringify(spa.SpotImages))
+        spa.dataValues.avgRating = Review.getRating(spa.Reviews)
+        spa.dataValues.previewImage = spa.SpotImages[0].url
+        delete spa.dataValues.Reviews
+        delete spa.dataValues.SpotImages
+        // console.log(spa)
     }
-})
+    res.status(201).json(spots)
+}
+    //  else {
+    //     if (page > 10) page = 10
+    //     if (size > 20) size = 20
+    //     const spots = await Spot.findAll({ limit: size, offset: size * (page - 1) })
+    //     for (let s of spots) {
+    //         s.dataValues.avgRating = await Review.getRating(s.dataValues.id)
+    //         s.dataValues.previewImage = await SpotImage.getPreview(s.dataValues.id)
+    //     }
+    //     res.status(201).json({ Spots: spots, page, size })
+
+)
 
 
 router.get('/:spotId', async (req, res) => {
     const { spotId } = req.params
 
-    const spotCheck = await Spot.findByPk(spotId)
-    if (!spotCheck) {
+    let spots = await Spot.findAll({
+        where: { id: spotId },
+        include: [
+            { model: Review, required: false, raw: true, },
+            { model: SpotImage, required: false, raw: true, attributes: ['id', 'url', 'preview'] },
+            { model: User, raw: true, attributes: ['id', 'firstName', 'lastName'] }
+        ],
+        // raw: true,
+        // group: [ 'id', 'SpotImages', 'Review.stars']
+    })
+    if (!spots[0]) {
         err = new Error('Spot couldn`t be found')
         err.status = 404
         throw err
     }
-    // console.log(spotId, spotCheck)
-    spotCheck.dataValues.avgRatingz = await Review.getRating(spotId)
-    spotCheck.dataValues.numReviews = await Review.getNumRevs(spotId)
-    spotCheck.dataValues.SpotImages = await SpotImage.getSpotImgs(spotId)
-    spotCheck.dataValues.Owner = await User.getOwner(spotId)
-    // await
-    res.json(spotCheck)
+    spots = JSON.parse(JSON.stringify(spots[0]))
+
+    if (spots.Reviews[0]) {
+        spots.avgStarRating = Review.getRating(spots.Reviews)
+        spots.numReviews = spots.Reviews.length
+        delete spots.Reviews
+    } else {
+        spots.avgStarRating = 0
+        spots.numReviews = 0
+    }
+    res.json(spots)
 
 })
 
@@ -181,19 +208,18 @@ router.post('/:spotId/images',
             throw err
         }
 
-        const imga = await SpotImage.create({
+        let imga = await SpotImage.create({
             spotId: spotId,
             url,
             preview
         },
         )
-        const newImga = await SpotImage.findOne({
-            where: { spotId: spotId, url },
-            attributes: {
-                exclude: ['spotId', 'createdAt', 'updatedAt']
-            }
-        })
-        res.json(newImga)
+        imga = JSON.parse(JSON.stringify(imga))
+        delete imga.createdAt
+        delete imga.updatedAt
+        delete imga.spotId
+
+        res.json(imga)
     }
 )
 
@@ -216,30 +242,37 @@ router.post('/:spotId/reviews',
 
 
 
-        const theSpot = await Spot.findByPk(spotId)
-        const currReviews = await Review.findAll({ where: { spotId: spotId } })
-
-        if (!theSpot) {
+        let currReviews = await Review.findAll({
+            where: { spotId: spotId },
+            include: { model: Spot }
+        })
+        currReviews = JSON.parse(JSON.stringify(currReviews))
+        if (!currReviews[0]) {
             const err = new Error('Spot couldn`t be found');
             err.status = 404
             throw err
 
         }
+
         for (let re of currReviews) {
             if (re.userId === userId) {
                 const err = new Error('User already has a review for this spot')
                 err.status = 403
                 throw err
-
-
+            }
+            if (re.Spot.ownerId === userId) {
+                const err = new Error('You are not allowed to review your own Spot!')
+                err.status = 403
+                throw err
             }
         }
-        if (review && stars) {
+        if (typeof review == 'string' && typeof stars == 'number') {
+            console.log(review, stars, typeof spotId)
             const newReview = await Review.create({
                 spotId: +spotId,
-                userId,
-                review,
-                stars
+                userId, userId,
+                review: review,
+                stars: stars
             })
             res.status(201)
             res.json(newReview)
@@ -255,9 +288,6 @@ router.post('/:spotId/bookings',
 
         const start = new Date(startDate)
         const end = new Date(endDate)
-
-        const theSpot = await Spot.findByPk(spotId)
-
         if (end <= start) {
             const err = new Error('Validation error')
             err.status = 400,
@@ -266,17 +296,24 @@ router.post('/:spotId/bookings',
                 }
             throw err
         }
-        const spat = await Spot.findByPk(spotId)
-        if (!spat) {
+        let theBooks = await Booking.findAll({
+            where: { spotId: spotId },
+            include: { model: Spot }
+        })
+        theBooks = JSON.parse(JSON.stringify(theBooks))
+        if (!theBooks[0]) {
             let er = new Error('Spot couldn`t be found')
             er.status = 404
             throw er
         }
-        const curBoo = await Booking.findAll({ where: { spotId: spotId } })
-
-        for (let boo of curBoo) {
-            let startCheck = new Date(boo.dataValues.startDate).valueOf()
-            let endCheck = new Date(boo.dataValues.endDate).valueOf()
+        if (theBooks[0].Spot.ownerId === userId) {
+            let er = new Error('You can not book your own spot!')
+            er.status = 404
+            throw er
+        }
+        for (let boo of theBooks) {
+            let startCheck = new Date(boo.startDate).valueOf()
+            let endCheck = new Date(boo.endDate).valueOf()
 
             if (startCheck <= start.valueOf() && start.valueOf() <= endCheck) {
                 const err = new Error('Sorry, this spot is already booked for the specified dates')
@@ -289,10 +326,10 @@ router.post('/:spotId/bookings',
             }
         }
         const newBook = await Booking.create({
-            spotId,
-            userId,
-            startDate,
-            endDate
+            spotId: spotId,
+            userId: userId,
+            startDate: startDate,
+            endDate: endDate
         })
         res.json(newBook)
     })
@@ -303,7 +340,7 @@ router.post('/',
     async (req, res, next) => {
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         const user = req.user.id
-
+        const check = req.body
 
         if (address == undefined || city == undefined || state == undefined
             || country == undefined || lat == undefined || lng == undefined
@@ -321,6 +358,9 @@ router.post('/',
                 'description': 'Description is required',
                 'price': 'Price per day is required'
             }
+            for (let p in check) {
+                delete er.errors[p]
+            }
             throw er
         }
 
@@ -328,10 +368,7 @@ router.post('/',
             ownerId: user,
             address, city, state, country, lat, lng, name, description, price
         })
-        // res.status(201)
         res.json(newSpot)
-
-        // }
     },
 )
 /////  POST ^///////  POST ^ ////// POST  ^ ///// POST  ^ ///////  POST ^ //////  POST ^/////
@@ -343,13 +380,14 @@ router.put('/:spotId',
     async (req, res) => {
         const { spotId } = req.params
         const user = req.user.id
-
+        const check = req.body
         const { address, city, state, country,
             lat, lng, name, description, price } = req.body
 
-        let theSpot = await Spot.findOne({
-            where: { id: spotId }
-        })
+        const mySpot = await Spot.findByPk(spotId)
+
+        let theSpot = JSON.parse(JSON.stringify(mySpot))
+
         if (!theSpot) {
             let er = new Error('Spot couldn`t be found')
             er.status = 404
@@ -362,9 +400,9 @@ router.put('/:spotId',
         }
 
 
-        if (address == undefined || city == undefined || state == undefined
-            || country == undefined || lat == undefined || lng == undefined
-            || name == undefined || description == undefined || price == undefined) {
+        if (address == undefined && city == undefined && state == undefined
+            && country == undefined && lat == undefined && lng == undefined
+            && name == undefined && description == undefined && price == undefined) {
             let er = new Error('Validation Error')
             er.status = 400
             er.errors = {
@@ -379,20 +417,14 @@ router.put('/:spotId',
                 'price': 'Price per day is required'
 
             }
-            // }
             throw er
         }
-        theSpot.address = address
-        theSpot.city = city
-        theSpot.state = state
-        theSpot.country = country
-        theSpot.lat = lat
-        theSpot.lng = lng
-        theSpot.name = name
-        theSpot.description = description
-        theSpot.price = price
-        theSpot.save()
-        res.json(theSpot)
+
+        for (let ch in check) {
+            mySpot[ch] = check[ch]
+            mySpot.save()
+        }
+        res.json(mySpot)
     }
 )
 /////  PUT ^///////  PUT ^ ////// PUT  ^ ///// PUT  ^ ///////  PUT ^ //////  PUT ^/////

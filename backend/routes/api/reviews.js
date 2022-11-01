@@ -34,23 +34,31 @@ router.get('/current',
     requireAuth,
     async (req, res) => {
         const user = req.user.id
-        const Reviews = await Review.findAll({
+        let Reviews = await Review.findAll({
             where: { userId: user },
-            include: [{ model: ReviewImage, attributes: ['id', 'url'] }, { model: User, attributes: ['id', 'firstName', 'lastName'] }]
+            include: [
+                { model: User, attributes: ['id', 'firstName', 'lastName'] },
+                {
+                    model: Spot,
+                    include: { model: SpotImage, where: { preview: true }, limit: 1 }
+                },
+
+                { model: ReviewImage, attributes: ['id', 'url'] },
+            ]
         })
-        for (let review of Reviews) {
-            const rev = review.dataValues
-            const spot = await Spot.findOne({
-                where: { id: rev.spotId },
-                include: [{ model: SpotImage, attributes: [] }],
-                attributes: { exclude: ['createdAt', 'updatedAt'] }
-
-            })
-            spot.dataValues.previewImage = await SpotImage.getPreview(spot.id)
-
-            rev.Spot = spot
+        if (!Reviews) {
+            err = new Error('No reviews yet!')
+            err.status = 404
+            throw err
         }
+        Reviews = JSON.parse(JSON.stringify(Reviews))
+        for (let rev of Reviews) {
+            rev.Spot.previewImage = rev.Spot.SpotImages[0].url
+            delete rev.Spot.SpotImages
+            delete rev.Spot.createdAt
+            delete rev.Spot.updatedAt
 
+        }
         res.json({ Reviews })
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
@@ -61,24 +69,24 @@ router.post('/:reviewId/images',
         const { url } = req.body
         const userId = req.user.id
 
-        const rev = await Review.findOne({
+        let rev = await Review.findOne({
             where: { id: reviewId },
-
+            include: { model: ReviewImage, required: false }
         })
-
+        rev = JSON.parse(JSON.stringify(rev))
         if (!rev) {
             err = new Error('Review couldn`t be found')
             err.status = 404
             throw err
         }
+        // console.log
         if (rev.userId !== userId) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
         }
-        // console.log(re)
-        if (rev.dataValues.ReviewImages) {
-            if (rev.dataValues.ReviewImages.length >= 10) {
+        if (rev.ReviewImages) {
+            if (rev.ReviewImages.length >= 10) {
                 const err = new Error('Maximum number of images for this resource was reached');
                 err.status = 403
                 throw err
@@ -98,13 +106,15 @@ router.put('/:reviewId',
         const { review, stars } = req.body
         const user = req.user.id
 
-        const theRev = await Review.findByPk(reviewId)
+        const Rev = await Review.findByPk(reviewId)
+        let theRev = JSON.parse(JSON.stringify(Rev))
+        console.log(theRev, user)
         if (!theRev) {
             const err = new Error('Review couldn`t be found')
             err.status = 404
             throw err
         }
-        if (theRev.dataValues.userId !== user) {
+        if (theRev.userId !== user) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
@@ -120,10 +130,10 @@ router.put('/:reviewId',
             throw err
         }
 
-        theRev.dataValues.review = review
-        theRev.dataValues.stars = stars
-        await theRev
-        res.json(theRev)
+        Rev.review = review
+        Rev.stars = stars
+        Rev.save()
+        res.json(Rev)
 
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
@@ -133,6 +143,7 @@ router.delete('/:reviewid',
     async (req, res) => {
         const { reviewid } = req.params
         const user = req.user.id
+
         const theReview = await Review.findOne({ where: { id: reviewid } })
 
         if (!theReview) {

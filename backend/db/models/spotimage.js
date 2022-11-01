@@ -22,13 +22,14 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       SpotImage.belongsTo(models.Spot, { foreignKey: 'spotId' })
-
+      // SpotImage.belongsToMany(models.Booking, { through: models.Spot, as:'BI', foreignKey: 'bookingId' })
     }
   }
   SpotImage.init({
     spotId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: { model: 'Spots' },
     },
     url: {
       type: DataTypes.STRING

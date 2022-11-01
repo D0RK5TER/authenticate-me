@@ -4,6 +4,7 @@ const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth')
 const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Booking } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+const booking = require('../../db/models/booking');
 
 const router = express.Router();
 
@@ -31,36 +32,21 @@ router.get('/current',
     async (req, res) => {
         validateLogin
         const user = req.user.id
-        const bookings = await Booking.findAll({
+        let bookings = await Booking.findAll({
             where: { userId: user },
-            include: { model: Spot },
+            include: {
+                model: Spot, include: { model: SpotImage, attributes: ['url'], where: { preview: true }, required: false },
+                attributes: { exclude: ['createdAt', 'updatedAt'] }
+            },
+            attributes: { include: ['id'] }
         })
+        bookings = JSON.parse(JSON.stringify(bookings))
         for (let boo of bookings) {
-            const spot = await Spot.findOne({
-                where: { id: boo.spotId },
-                include: [
-                    {
-                        model: SpotImage,
-                        attributes: [],
-                        where: {
-                            preview: true
-                        },
-                        required: false
-                    }],
+            boo.Spot.previewImage = boo.Spot.SpotImages[0].url
 
-                attributes: {
-                    include: [
-                        [
-                            sequelize.col('SpotImages.url'),
-                            'previewImage'
-                        ]
-                    ],
-                    exclude: ['createdAt', 'updatedAt', 'description']
-                },
-            })
-            boo.dataValues.Spot = spot
+            delete boo.Spot.SpotImages
         }
-        res.json({ Bookings: bookings })
+        res.json({ bookings })
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 
@@ -68,98 +54,109 @@ router.put('/:bookingId',
     // restoreUser,
     requireAuth,
     async (req, res) => {
-        const user = req.user.id
         const { startDate, endDate } = req.body
         const { bookingId } = req.params
-        const bookings = await Booking.findOne({
-            where: { id: bookingId }
-        })
-
-        let today = new Date()
-        today = Date.parse(today)
-        const tryBook = Date.parse(startDate)
-
-        if (!bookings) {
+        const userId = req.user.id
+        const thisBoo = await Booking.findByPk(bookingId)
+        const today = new Date()
+        if (!thisBoo) {
             let er = new Error('Booking couldn`t be found')
             er.status = 404
             throw er
-        } else if (bookings.userId !== user /*spot owner goes */) {
-            const err = new Error('Forbidden');
-            err.status = 403
-            throw err
         }
-        else if (Date.parse(startDate) >= Date.parse(endDate)) {
-            let er = new Error('Validation error')
-            er.status = 400
-            er.errors = { 'endDate': 'endDate cannot come before startDate' }
-            throw er
-        }
-        else if (today >= Date.parse(startDate) || today >= Date.parse(endDate)) {
+        if (today >= thisBoo.startDate) {
             let er = new Error('Past bookings can`t be modified')
             er.status = 403
             throw er
         }
-        else if (Date.parse(bookings.startDate) >= Date.parse(bookings.endDate)) {
-            let er = new Error('Past bookings can`t be modified')
-            er.status = 400
-            throw er
+        if (endDate <= startDate) {
+            const err = new Error('Validation error')
+            err.status = 400,
+                err.errors = {
+                    'endDate': 'endDate cannot be on or before startDate'
+                }
+            throw err
+        }
+        let bookings = await Booking.findAll({
+            where: { spotId: thisBoo.spotId },
+            include: { model: Spot, attributes: ['ownerId'] },
+        })
+        bookings = JSON.parse(JSON.stringify(bookings))
+        const owner = bookings[0].Spot.ownerId
+        if (thisBoo.userId !== userId && thisBoo.userId !== owner) {
+            const err = new Error('Forbidden');
+            err.status = 403
+            throw err
         }
 
-        let occupied = await Booking.findAll({
-            include: { model: Spot },
-            where: { id: bookings.spotId }
-        })
-        for (let boo of occupied) {
-            let startCheck = new Date(boo.startDate)
-            let endCheck = new Date(boo.endDate)
-            const start = new Date(startDate)
-            if (startCheck <= start && start <= endCheck) {
-                const err = new Error('Sorry, this spot is already booked for the specified dates')
-                err.status = 403,
-                    err.errors = {
-                        'startDate': 'Start date conflicts with an existing booking',
-                        'endDate': 'End date conflicts with an existing booking'
-                    }
+        const startChange = new Date(startDate)
+        const endChange = new Date(endDate)
+        const err = new Error('Sorry, this spot is already booked for the specified dates')
+        err.status = 403,
+            err.errors = {
+                'startDate': 'Start date conflicts with an existing booking',
+                'endDate': 'End date conflicts with an existing booking'
+            }
+
+        for (let book of bookings) {
+            let startCheck = new Date(book.startDate)
+            let endCheck = new Date(book.endDate)
+            if (startChange >= startCheck && startChange <= endCheck) {
+                throw err
+            }
+
+            if (endChange <= endCheck && endChange >= startCheck) {
+                throw err
+            }
+            if (endChange >= endCheck && startChange <= startCheck) {
                 throw err
             }
         }
-        bookings.startDate = startDate
-        bookings.endDate = endDate
-        res.json(bookings)
+        thisBoo.set({
+            startDate: startChange,
+            endDate: endChange
+        })
+        thisBoo.save()
+        res.json(thisBoo)
+    }
+)
 
-    })
+
 router.delete('/:bookingid',
     requireAuth,
     async (req, res) => {
         const { bookingid } = req.params
         const user = req.user.id
-        const thebooking = await Booking.findOne({ where: { id: bookingid } })
+        const thebooking = await Booking.findOne(
+            {
+                where: { id: bookingid },
+                include: { model: Spot, attributes: ['ownerId'] }
+            }
+        )
         if (!thebooking) {
             let er = new Error('Review booking couldn`t be found')
             er.status = 404
             throw er
         }
-        let today = new Date().valueOf()
-        let Boday = thebooking.startDate
-        const spat = await Spot.findOne({ where: { id: thebooking.spotId } })
-        if (!(thebooking.userId == user || spat.ownerId == user)) {
+        let owner = thebooking.dataValues.Spot.dataValues.ownerId
+        console.log(owner)
+        let today = new Date()
+        let bookStart = thebooking.dataValues.startDate
+        if (owner !== user && thebooking.dataValues.userId !== user) {
             const err = new Error('Forbidden');
             err.status = 403
             throw err
-        } else if (Date.parse(Boday) < today) {
+        }
+        if (today > bookStart) {
             let er = new Error('Bookings that have been started can`t be deleted')
             er.status = 403
             throw er
         }
-        else {
-            await thebooking.destroy()
-
-            res.json({
-                'message': 'Successfully deleted',
-                'statusCode': 200
-            })
-        }
-
+        await thebooking.destroy()
+        res.json({
+            'message': 'Successfully deleted',
+            'statusCode': 200
+        })
     })
 
 module.exports = router;
