@@ -53,6 +53,7 @@ router.get('/current',
         }
         Reviews = JSON.parse(JSON.stringify(Reviews))
         for (let rev of Reviews) {
+            if(!rev.Spot) continue
             rev.Spot.previewImage = rev.Spot.SpotImages[0].url
             delete rev.Spot.SpotImages
             delete rev.Spot.createdAt

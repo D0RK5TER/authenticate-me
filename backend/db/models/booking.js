@@ -6,21 +6,29 @@ module.exports = (sequelize, DataTypes) => {
   class Booking extends Model {
 
     static associate(models) {
-      Booking.belongsTo(models.User, {foreignKey: 'userId' })
-      Booking.belongsTo(models.Spot, {foreignKey: 'spotId' })
+      Booking.belongsTo(models.User, { foreignKey: 'userId'})
+      Booking.belongsTo(models.Spot, { foreignKey: 'spotId' })
       // Booking.belongsToMany(models.User, { through: models.Review, foreignKey: 'userId' })
       // Booking.belongsToMany(models.Spot, { through: models.SpotImage, foreignKey: 'url' })
 
     }
   }
   Booking.init({
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
     spotId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+
     },
     startDate: {
       type: DataTypes.DATEONLY,

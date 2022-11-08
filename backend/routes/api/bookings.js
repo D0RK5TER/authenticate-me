@@ -36,12 +36,13 @@ router.get('/current',
             where: { userId: user },
             include: {
                 model: Spot, include: { model: SpotImage, attributes: ['url'], where: { preview: true }, required: false },
-                attributes: { exclude: ['createdAt', 'updatedAt'] }
+                attributes: { exclude: ['createdAt', 'updatedAt'], required: true }
             },
             attributes: { include: ['id'] }
         })
         bookings = JSON.parse(JSON.stringify(bookings))
         for (let boo of bookings) {
+            if (!boo.Spot) continue
             boo.Spot.previewImage = boo.Spot.SpotImages[0].url
 
             delete boo.Spot.SpotImages
@@ -55,21 +56,23 @@ router.put('/:bookingId',
     requireAuth,
     async (req, res) => {
         const { startDate, endDate } = req.body
-        const { bookingId } = req.params
+        let { bookingId } = req.params
         const userId = req.user.id
+        // bookingId = +bookingId
         const thisBoo = await Booking.findByPk(bookingId)
         const today = new Date()
+        console.log(thisBoo, bookingId, typeof bookingId)
         if (!thisBoo) {
             let er = new Error('Booking couldn`t be found')
             er.status = 404
             throw er
         }
-        if (today >= thisBoo.startDate) {
+        else if (today >= thisBoo.startDate) {
             let er = new Error('Past bookings can`t be modified')
             er.status = 403
             throw er
         }
-        if (endDate <= startDate) {
+        else if (endDate <= startDate) {
             const err = new Error('Validation error')
             err.status = 400,
                 err.errors = {
@@ -77,11 +80,14 @@ router.put('/:bookingId',
                 }
             throw err
         }
+        console.log(thisBoo)
+
         let bookings = await Booking.findAll({
             where: { spotId: thisBoo.spotId },
             include: { model: Spot, attributes: ['ownerId'] },
         })
         bookings = JSON.parse(JSON.stringify(bookings))
+        console.log(bookings)
         const owner = bookings[0].Spot.ownerId
         if (thisBoo.userId !== userId && thisBoo.userId !== owner) {
             const err = new Error('Forbidden');

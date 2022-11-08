@@ -114,7 +114,7 @@ router.get('/current',
 router.get('/', async (req, res) => {
     let { page, size } = req.query;
     // console.log(hey)
-    const spots = await Spot.findAll({
+    let spots = await Spot.findAll({
         include: [
             { model: Review, required: false, raw: true, },
             { model: SpotImage, required: false, raw: true }
@@ -122,15 +122,15 @@ router.get('/', async (req, res) => {
         // raw: true,
         // group: [ 'id', 'SpotImages', 'Review.stars']
     })
+    spots = JSON.parse(JSON.stringify(spots))
     for (let spa of spots) {
-        // console.log(spa)
-        spa.Reviews = JSON.parse(JSON.stringify(spa.Reviews))
-        spa.SpotImages = JSON.parse(JSON.stringify(spa.SpotImages))
-        spa.dataValues.avgRating = Review.getRating(spa.Reviews)
-        spa.dataValues.previewImage = spa.SpotImages[0].url
-        delete spa.dataValues.Reviews
-        delete spa.dataValues.SpotImages
-        // console.log(spa)
+
+        spa.Reviews.length ? spa.avgRating = Review.getRating(spa.Reviews) : spa.avgRating = 0
+        spa.SpotImages.length ? spa.previewImage = spa.SpotImages[0].url : spa.previewImage = 'No preview'
+
+        delete spa.Reviews
+        delete spa.SpotImages
+        // returnarr.push(spa)
     }
     res.status(201).json(spots)
 }
