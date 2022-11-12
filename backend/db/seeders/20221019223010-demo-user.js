@@ -12,69 +12,69 @@ module.exports = {
         lastName: 'Asssfg',
         email: 'user0@user.co',
         username: 'Dorkster',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Jacob',
         lastName: 'Lauxman',
         email: 'user1@user.co',
         username: 'Jauxman',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Mike',
         lastName: 'Miller',
         email: 'user3@user.co',
         username: 'MMMCMM',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Arko',
         lastName: 'chakman',
         email: 'user12@user.net',
         username: 'RKOman',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Jado',
         lastName: 'oooooh',
         email: 'user21@user.com',
         username: 'Jmoney',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Matt',
         lastName: 'Mastersmith',
         email: 'user111@user.io',
         username: 'Ketmasta',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Trsdvevor',
         lastName: 'Moovsvre',
         email: 'usered111@user.io',
         username: 'MoTrev1',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Trevofdr',
         lastName: 'Mooffdre',
         email: 'user11111@user.io',
         username: 'MoTrev2',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       },
       {
         firstName: 'Tsdrevor',
         lastName: 'Mofore',
         email: 'used111@user.io',
         username: 'MoTrev3',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       }, {
         firstName: 'Tsdrevor',
         lastName: 'Moasdore',
         email: 'red111@user.io',
         username: 'MoTrev4',
-        hashedPassword: bcrypt.hashSync('secret password')
+        hashedPassword: bcrypt.hashSync('password')
       }
     ], {})
     await queryInterface.bulkInsert('Spots', [

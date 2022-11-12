@@ -1,7 +1,7 @@
 // frontend/src/App.js
 import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import SignupFormPage from "./components/SignupFormPage";
+import SignupFormPage from "./components/SignUpFormPage";
 import LoginFormPage from './components/LoginFormPage';
 import { restoreUser } from './store/session';
 import Navigation from './components/Navigation';

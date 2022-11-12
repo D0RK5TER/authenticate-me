@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from 'react-redux';
 import * as sessionActions from '../../store/session';
-import { ReactComponent as Logo } from '../../../../assets/Logo20.svg';
+// import { ReactComponent as Logo } from '../../../../assets/Logo20.svg';
 
 
 function ProfileButton({ user }) {
@@ -33,9 +33,9 @@ function ProfileButton({ user }) {
     return (
         <>
             <button onClick={openMenu}>
-                <div>
-                    <Logo  />
-                </div>
+                {/* <div> */}
+                    {/* <Logo  /> */}
+                {/* </div> */}
             </button>
             {showMenu && (
                 <ul className="profile-dropdown">
