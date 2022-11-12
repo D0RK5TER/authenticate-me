@@ -44,11 +44,11 @@ router.post(
         ///////IS IT NEEDED ABOVE^^^^^s
 
         const user = await User.signup({ firstName, lastName, email, username, password });
-
+        // delete user.password MAYBE
         await setTokenCookie(res, user);
 
         return res.json({
-            user,
+            'user': user
         });
     }
 );      //////^^^^^^^^^

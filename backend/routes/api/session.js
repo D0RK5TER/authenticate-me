@@ -39,7 +39,7 @@ router.post(
                 include: ['id', 'firstName', 'lastName', 'email', 'username'],
             }
         })
-        res.json(user)
+        res.json({ 'user': user })
     }
 );
 
@@ -60,11 +60,11 @@ router.get(
             const NEWuser = await User.findOne({
                 where: { id: user.id },
                 attributes: {
-                    include: ['email']
+                    include: ['id', 'firstName', 'lastName', 'email', 'username']
                 }
             });
-            return res.json(NEWuser);
-        } else return res.json({});
+            return res.json({ user: NEWuser });
+        } else return res.json({ user: null });
     }
 );
 
