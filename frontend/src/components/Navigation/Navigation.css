@@ -1,8 +1,7 @@
 @font-face {
     font-family: "Light";
-    /*Can be any text*/
-    src: local("AirbnbCerealLight"),
-        url("../../assets/AirbnbCerealLight.ttf") format("truetype");
+    src: local("earthrnrCerealLight"),
+        url("../../assets/earthrnrCerealLight.ttf") format("truetype");
 }
 
 .topbar {
@@ -20,14 +19,11 @@
 .profileshape {
 
     height: 3em;
-    /* text-align: center; */
     vertical-align: central;
     border-radius: 50%;
 }
 
 .homebutt {
-
-    /* position: sticky; */
     display: flex;
     font-size: 1.2em;
     text-decoration: none;

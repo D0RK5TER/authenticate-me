@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as sessionActions from '../../store/session';
 import outline from '../../assets/outline.png';
@@ -26,14 +26,11 @@ function ProfileButton() {
                 {showMenu && (
                     <div className="profile-dropdown" style={{}}>
                         <div>
-
                             <LoginFormModal />
                         </div>
                         <div>
                             <SignUpFormModal />
                         </div>
-
-
                     </div>
 
                 )}
@@ -49,11 +46,6 @@ function ProfileButton() {
                         <div>
                             <button onClick={logout}>Log Out</button>
                         </div>
-                        {/* <li>
-
-                            <SignUpFormModal />
-                        </li> */}
-
                     </div>
 
                 )}
