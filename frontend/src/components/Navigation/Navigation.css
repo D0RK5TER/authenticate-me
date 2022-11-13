@@ -33,7 +33,7 @@
     text-decoration: none;
     align-items: center;
     font-stretch: extra-condensed;
-    -webkit-text-fill-color: #d25e5c;
+    -webkit-text-fill-color: #fe5a62;
     vertical-align: top;
 }
 
@@ -53,5 +53,6 @@
     /* position: relative; */
     background-color: white;
     border-radius: 50%;
+    border-color: #fe5a62;
     /* text-align: left */
 }
