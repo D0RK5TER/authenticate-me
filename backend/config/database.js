@@ -10,13 +10,6 @@ module.exports = {
     logQueryParameters: true,
     typeValidation: true
   },
-  //   development: {
-  //     username: DEV_DATABASE_USERNAME,
-  //     password: DEV_DATABASE_PASSWORD,
-  //     database: "test",
-  //     host: DEV_DATABASE_HOST,
-  //     dialect: "postgres"
-  //  },
   production: {
     use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
