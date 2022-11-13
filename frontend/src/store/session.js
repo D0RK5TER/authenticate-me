@@ -1,5 +1,4 @@
 import { csrfFetch } from './csrf';
-import { Redirect } from "react-router-dom"; ///added for restore
 
 const SET_USER = 'session/setUser';
 const REMOVE_USER = 'session/removeUser';
@@ -27,17 +26,17 @@ export const login = (user) => async (dispatch) => {
         }),
     });
     const data = await response.json();
-    console.log(data)
-    dispatch(setUser(data));
+    // console.log(data)
+    dispatch(setUser(data.user));
     return response;
 };
 export const logout = () => async (dispatch) => {
     const response = await csrfFetch('/api/session', {
-      method: 'DELETE',
+        method: 'DELETE',
     });
     dispatch(removeUser());
     return response;
-  };
+};
 // frontend/src/store/session.js
 export const signup = (user) => async (dispatch) => {
     const { firstName, lastName, email, password, username } = user;
@@ -52,17 +51,14 @@ export const signup = (user) => async (dispatch) => {
         }),
     });
     const data = await response.json();
-    //console.log(data)
-    dispatch(setUser(data));
+    dispatch(setUser(data.user));
     return response;
 };
 // ...
 export const restoreUser = () => async dispatch => {
     const response = await csrfFetch('/api/session');
     const data = await response.json();
-    // v added for concise
-    if (!data) return <Redirect to="/" />
-    dispatch(setUser(data));
+    dispatch(setUser(data.user));
     return response;
 };
 // ...

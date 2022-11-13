@@ -1,43 +1,34 @@
-// frontend/src/App.js
-import React, { useState, useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Route, Switch } from "react-router-dom";
+import * as sessionActions from "./store/session";
+import Navigation from "./components/Navigation";
 import SignupFormPage from "./components/SignUpFormPage";
-import LoginFormPage from './components/LoginFormPage';
-import { restoreUser } from './store/session';
-import Navigation from './components/Navigation';
+
 
 function App() {
-  // const dispatch = useDispatch();
-  // const [isLoaded, setIsLoaded] = useState(false);
-  // useEffect(() => {
-  //   dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
-  // }, [dispatch]);
-  ///////v this for return /// ^this for auth /// docs
-  // isLoaded && 
+  const dispatch = useDispatch();
+  const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
-    restoreUser()
-  }, [])
-
+    dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
+  }, [dispatch]);
+  /////v this for return /// ^this for auth /// doc
 
   return (
-    // <h1>FairRnR</h1>
     <>
-      <Navigation />
-
-      <Switch>
-        {/* <Route exact path="/">
-        <h1>Welcome Home Buckaroo!</h1>
-      </Route> */}
-        <Route path="/signup">
-          <SignupFormPage />
-        </Route>
-        <Route path="/login">
-          <LoginFormPage />
-        </Route>
-      </Switch>
+      <Navigation isLoaded={isLoaded} />
+      {isLoaded && (
+        <Switch>
+          <Route path="/signup">
+            <SignupFormPage />
+          </Route>
+        </Switch>
+      )}
     </>
-
   );
+
+
+
 }
 
 export default App;

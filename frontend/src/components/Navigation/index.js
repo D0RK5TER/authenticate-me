@@ -2,32 +2,40 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
-// import './Navigation.css';
+import LoginFormModal from '../LoginFormModal';
+import './Navigation.css';
+import logo from '../../assets/logo.jpg';
 
-function Navigation() {
-    const sessionUser = useSelector((state) => state.session.user);
+
+function Navigation({ isLoaded }) {
+    const sessionUser = useSelector(state => state.session.user);
+
     let sessionLinks;
     if (sessionUser) {
         sessionLinks = (
-            <ProfileButton user={sessionUser} />
+            <>
+                <ProfileButton user={sessionUser} />
+            </>
         );
     } else {
         sessionLinks = (
             <>
-                <NavLink to="/login">Log In</NavLink>
+                <LoginFormModal />
                 <NavLink to="/signup">Sign Up</NavLink>
             </>
         );
     }
-
-    //{/* {isLoaded && sessionLinks} */} removed from below navlink
+    // eva.replace()
     return (
-        <ul>
-            <li>
-                <NavLink exact to="/">Home</NavLink>
-                {sessionLinks}
-            </li>
-        </ul>
+        <span className='topbar'>
+
+            <NavLink exact to="/" className={'homebutt'} >
+                <img src={logo} style={{ paddingRight: '15px' }} />
+                earthRnR
+            </NavLink>
+            {sessionLinks}
+        </span>
+
     );
 }
 

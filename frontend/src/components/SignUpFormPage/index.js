@@ -4,8 +4,8 @@ import { Redirect } from "react-router-dom";
 import * as sessionActions from '../../store/session';
 
 function SignupFormPage() {
-    const dispatch = useDispatch();     /* deleted '.session.*/
-    const sessionUser = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const sessionUser = useSelector((state) => state.session.user);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("");
@@ -13,7 +13,7 @@ function SignupFormPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState([]);
-
+    console.log(sessionUser)
     if (sessionUser) return <Redirect to="/" />;
 
     const handleSubmit = (e) => {
@@ -30,7 +30,7 @@ function SignupFormPage() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={'signupform'}>
             <ul>
                 {errors.map((error, idx) => <li key={idx}>{error}</li>)}
             </ul>

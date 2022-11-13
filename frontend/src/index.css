@@ -2,6 +2,10 @@
 /* @font-face {
     font-family: 'MyFont';
     src: local('MyFont'), url() format('woff'); */
-    /* other formats include: 'woff2', 'truetype, 'opentype',
+/* other formats include: 'woff2', 'truetype, 'opentype',
                               'embedded-opentype', and 'svg' */
-  /* } */
+/* } */
+
+body {
+    margin-top: 0;
+}

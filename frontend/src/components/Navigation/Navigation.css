@@ -1,0 +1,53 @@
+@font-face {
+    font-family: "Light";
+    /*Can be any text*/
+    src: local("AirbnbCerealLight"),
+        url("../../assets/AirbnbCerealLight.ttf") format("truetype");
+}
+
+.topbar {
+    font-family: "Light";
+    display: flex;
+    justify-self: center;
+    margin: 0, 20%, 0, 20%;
+    position: static;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-left: 2em;
+    padding-top: 1em;
+}
+
+.profileshape {
+
+    height: 3em;
+    text-align: center;
+    vertical-align: central;
+    border-radius: 50%;
+}
+
+.homebutt {
+
+    /* position: sticky; */
+    display: flex;
+    font-size: 1.2em;
+    text-decoration: none;
+    align-items: center;
+    font-stretch: extra-condensed;
+    -webkit-text-fill-color: #d25e5c;
+    vertical-align: top;
+}
+
+.dropbar {
+    width: 7em;
+    padding-right: 2em;
+    text-align: center;
+}
+
+
+.profilebutt {
+    /* vertical-align: middle; */
+    /* position: relative; */
+    background-color: white;
+    border-radius: 50%;
+    /* text-align: left */
+}
