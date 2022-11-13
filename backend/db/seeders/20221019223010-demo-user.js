@@ -80,38 +80,38 @@ module.exports = {
     await queryInterface.bulkInsert('Spots', [
       {
         ownerId: 1,
-        address: 'left',
-        city: 'Bay Area',
+        address: '100 California St',
+        city: 'San Francisco',
         state: 'CA',
-        country: 'murica',
-        lat: 42.03,
-        lng: 54.56,
+        country: 'US',
+        lat: 37.783617,
+        lng: -122.411507,
         name: 'Casa De La Dexta',
-        description: 'big rooms and crying babies',
-        price: 100.10
+        description: 'big rooms and crying babies, good wifi, clean sheets, and a sink full of dirty dishes.',
+        price: 123.12
       },
       {
         ownerId: 2,
-        address: 'left of right',
-        city: 'Tinsel Town',
-        state: 'OR',
-        country: 'murica',
-        lat: 7.03,
-        lng: 1.56,
+        address: '200 Sacremento St',
+        city: 'San Francisco',
+        state: 'CA',
+        country: 'US',
+        lat: 37.903617,
+        lng: -122.601507,
         name: 'Jacobs Couch',
-        description: 'super plush bruh',
-        price: 104.10
+        description: 'A perfect couch with up to 3 furry sleeping companions!',
+        price: 210.21
       }, {
         ownerId: 3,
-        address: '122 millsway',
-        city: 'Millersville',
-        state: 'KY',
-        country: 'murica',
-        lat: 75.03,
-        lng: 13.56,
-        name: 'Tent outside',
-        description: 'Soft grass',
-        price: 44.10
+        address: '300 Clay St',
+        city: 'San Francisco',
+        state: 'CA',
+        country: 'US',
+        lat: 37.093617,
+        lng: -122.901507,
+        name: 'Millers Mansion',
+        description: 'A super eco-friendly, commune catering to people of all walks of life',
+        price: 420.42
       }
     ], {})
 
@@ -125,31 +125,48 @@ module.exports = {
       {
         spotId: 3,
         userId: 1,
-        review: 'Faye is GOORRRgeous, my mommy said so ',
+        review: 'Super stoked bruh, 10/1 luvd it ',
         stars: 5
       },
       {
         spotId: 1,
         userId: 5,
-        review: 'WHAAT A DUMPSTER FIRE!!!!',
-        stars: 4
+        review: 'WHAAT A DUMPSTER FIRE!!!! Did you know that babies cry at night?!?!',
+        stars: 1
       },
       {
         spotId: 2,
         userId: 4,
-        review: 'Super fun, 10/10 would recommend',
+        review: 'I thought the cats singing voices were beautiful, will be back!',
         stars: 5
       },
       {
         spotId: 3,
         userId: 1,
-        review: 'Jeeez what was that whole thinng about',
-        stars: 4
+        review: 'Jeeez what was that whole thinng about, I thought it was free....',
+        stars: 1
       },
       {
         spotId: 2,
         userId: 6,
         review: 'The couch was unbeliable.... And breakfast! ',
+        stars: 5
+      },
+      {
+        spotId: 2,
+        userId: 5,
+        review: 'I hate cats! ',
+        stars: 1
+      },
+      {
+        spotId: 3,
+        userId: 6,
+        review: 'Was recommended to come here by a friend... did not expect to see them there when i arrived ',
+        stars: 3
+      }, {
+        spotId: 1,
+        userId: 6,
+        review: 'I mean, who could say no to that sweet little baby face',
         stars: 5
       }
     ], {})
@@ -157,7 +174,7 @@ module.exports = {
     await queryInterface.bulkInsert('ReviewImages', [
       {
         reviewId: 1,
-        url: 'http:/www.cl.org'
+        url: 'https://media.istockphoto.com/id/140217119/photo/my-flatmate-hasnt-done-the-chores-again.jpg?s=1024x1024&w=is&k=20&c=bE5PP4SakTtt1d6BqG6mI8F6CV9I8-wBfQfZN7oLsAM='
       }, {
         reviewId: 4,
         url: 'http:/www.whatsitcalled.net'
@@ -166,7 +183,7 @@ module.exports = {
         url: 'http:/www.halalulah.net'
       }, {
         reviewId: 2,
-        url: 'http:/www.googz.com'
+        url: 'https://m.media-amazon.com/images/M/MV5BOTA3NmU1NDMtYzcxMC00ZjI5LTllZWItYWI3MmZkNTE1ZTg0XkEyXkFqcGdeQW1hcmNtYW5u._V1_.jpg'
       },
       {
         reviewId: 3,
@@ -176,7 +193,7 @@ module.exports = {
     await queryInterface.bulkInsert('SpotImages', [
       {
         spotId: 1,
-        url: 'www.ilovemywife.com',
+        url: 'https://a0.muscache.com/im/pictures/dd9cf0f0-57e0-42a5-aef6-b15e95ab0d40.jpg?im_w=960',
         preview: true
       },
       {
@@ -186,12 +203,12 @@ module.exports = {
       },
       {
         spotId: 2,
-        url: 'www.theotherwwf.com',
+        url: 'https://a0.muscache.com/im/pictures/miso/Hosting-51165983/original/68d5ccb4-194c-4470-9e61-d0aa02b1c9d0.jpeg?im_w=1200',
         preview: true
       },
       {
         spotId: 3,
-        url: 'www.nottheaniimals.com',
+        url: 'https://a0.muscache.com/im/pictures/56467892-0d23-4ab1-8302-9c3d0d5e52cd.jpg?im_w=1200',
         preview: true
       },
       {

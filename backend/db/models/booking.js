@@ -8,9 +8,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Booking.belongsTo(models.User, { foreignKey: 'userId'})
       Booking.belongsTo(models.Spot, { foreignKey: 'spotId' })
-      // Booking.belongsToMany(models.User, { through: models.Review, foreignKey: 'userId' })
-      // Booking.belongsToMany(models.Spot, { through: models.SpotImage, foreignKey: 'url' })
-
     }
   }
   Booking.init({
