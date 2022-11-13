@@ -1,15 +1,8 @@
 const express = require('express')
-
-const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require('../../db/models');
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
-const queryInterface = sequelize.getQueryInterface();
-
+const { requireAuth } = require('../../utils/auth');
+const { Review, ReviewImage } = require('../../db/models');
 const router = express.Router();
-
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
-
 router.delete('/:imageid',
     requireAuth,
     async (req, res) => {
@@ -25,8 +18,6 @@ router.delete('/:imageid',
             throw er
         }
         let image = JSON.parse(JSON.stringify(theimage))
-        console.log(image.Review.userId, user)
-        // const thereview = await Review.findOne({ where: { id: theimage.reviewId } })
         if (user !== image.Review.userId) {
             const err = new Error('Forbidden');
             err.status = 403
@@ -40,9 +31,6 @@ router.delete('/:imageid',
                 'statusCode': 200
             })
         }
-
     })
-
-
 
 module.exports = router;

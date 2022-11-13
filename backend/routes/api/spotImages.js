@@ -1,14 +1,8 @@
 const express = require('express')
-
-const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require('../../db/models');
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
-const queryInterface = sequelize.getQueryInterface();
+const { requireAuth } = require('../../utils/auth');
+const { Spot, SpotImage } = require('../../db/models');
 
 const router = express.Router();
-
-
 
 router.delete('/:spotimageid',
     requireAuth,
@@ -36,7 +30,6 @@ router.delete('/:spotimageid',
                 'statusCode': 200
             })
         }
-
     })
 
 

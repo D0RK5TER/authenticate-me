@@ -1,15 +1,7 @@
 const express = require('express')
+const { requireAuth } = require('../../utils/auth');
+const { User, Spot, Review, ReviewImage, SpotImage, Booking } = require('../../db/models');
 
-const { setTokenCookie, requireAuth, restoreUser } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, SpotImage, Booking, sequelize, Sequelize, checkCreate, dataValues } = require('../../db/models');
-const { check } = require('express-validator');
-const { Op, ValidationError } = require('sequelize');
-const queryInterface = sequelize.getQueryInterface();
-const { handleValidationErrors } = require('../../utils/validation');
-const { urlencoded } = require('express');
-const e = require('express');
-const spotimage = require('../../db/models/spotimage');
-const { response } = require('../../app');
 
 const router = express.Router();
 
@@ -28,11 +20,8 @@ router.get('/:spotId/reviews', async (req, res) => {
                     model: User,
                     attributes: ['id', 'firstName', 'lastName']
                 }],
-
             },],
-
         attributes: []
-
     })
     if (!Reviews[0]) {
         err = new Error('Spot couldn`t be found')
@@ -103,17 +92,14 @@ router.get('/current',
             if (spa.SpotImages[0]) {
                 spa.previewImage = spa.SpotImages[0].url
             } else spa.previewImage = 'No preview yet'
-            console.log(spa)
             delete spa.Reviews
             delete spa.SpotImages
-            console.log(spa)
             spa = spa
         }
         res.status(201).json(spots)
     })
 router.get('/', async (req, res) => {
-    let { page, size } = req.query;
-    // console.log(hey)
+    // let { page, size } = req.query;
     let spots = await Spot.findAll({
         include: [
             { model: Review, required: false, raw: true, },
@@ -130,7 +116,6 @@ router.get('/', async (req, res) => {
 
         delete spa.Reviews
         delete spa.SpotImages
-        // returnarr.push(spa)
     }
     res.status(201).json(spots)
 }
@@ -178,13 +163,6 @@ router.get('/:spotId', async (req, res) => {
     res.json(spots)
 
 })
-
-
-
-
-
-
-
 /////  GET ^///////  GET ^ ////// GET  ^ ///// GET  ^ ///////  GET ^ //////  GET ^/////
 
 /////  POST v ///////  POST v ////// POST  v ///// POST  v ///////  POST v //////  POST v/////
@@ -201,7 +179,6 @@ router.post('/:spotId/images',
             throw err
         }
         const user = req.user.id
-        // console.log(theSpot.dataValues.ownerId, user)
         if (theSpot.dataValues.ownerId !== user) {
             const err = new Error('Forbidden');
             err.status = 403
@@ -225,7 +202,7 @@ router.post('/:spotId/images',
 
 router.post('/:spotId/reviews',
     requireAuth,
-    async (req, res, next) => {
+    async (req, res) => {
         const { review, stars } = req.body
         const { spotId } = req.params
         const userId = req.user.id
@@ -239,9 +216,6 @@ router.post('/:spotId/reviews',
             }
             throw err
         }
-
-
-
         let currReviews = await Review.findAll({
             where: { spotId: spotId },
             include: { model: Spot }
@@ -251,9 +225,7 @@ router.post('/:spotId/reviews',
             const err = new Error('Spot couldn`t be found');
             err.status = 404
             throw err
-
         }
-
         for (let re of currReviews) {
             if (re.userId === userId) {
                 const err = new Error('User already has a review for this spot')
@@ -337,7 +309,7 @@ router.post('/:spotId/bookings',
 
 router.post('/',
     requireAuth,
-    async (req, res, next) => {
+    async (req, res) => {
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         const user = req.user.id
         const check = req.body
@@ -385,7 +357,6 @@ router.put('/:spotId',
             lat, lng, name, description, price } = req.body
 
         const mySpot = await Spot.findByPk(spotId)
-
         let theSpot = JSON.parse(JSON.stringify(mySpot))
 
         if (!theSpot) {
@@ -398,8 +369,6 @@ router.put('/:spotId',
             err.status = 403
             throw err
         }
-
-
         if (address == undefined && city == undefined && state == undefined
             && country == undefined && lat == undefined && lng == undefined
             && name == undefined && description == undefined && price == undefined) {
@@ -419,7 +388,6 @@ router.put('/:spotId',
             }
             throw er
         }
-
         for (let ch in check) {
             mySpot[ch] = check[ch]
             mySpot.save()
@@ -435,7 +403,6 @@ router.delete('/:spotid',
     async (req, res) => {
         const { spotid } = req.params
         const user = req.user.id
-
         const theSpot = await Spot.findOne({ where: { id: spotid } })
 
         if (!theSpot) {

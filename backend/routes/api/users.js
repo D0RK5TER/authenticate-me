@@ -33,36 +33,13 @@ router.post(
     validateSignup,
     async (req, res) => {
         const { firstName, lastName, email, password, username } = req.body;
-
-        // if (!User.findOne({ where: { email } })) {
-        //     const err = new Error('User Already Exists');
-        //     err.status = 403;
-        //     err.title = 'User Already Exists';
-        //     err.errors = ['User Already Exists.'];
-        //     return next(err);
-        // }
-        ///////IS IT NEEDED ABOVE^^^^^s
-
         const user = await User.signup({ firstName, lastName, email, username, password });
-        // delete user.password MAYBE
         await setTokenCookie(res, user);
-
         return res.json({
             'user': user
         });
     }
-);      //////^^^^^^^^^
-
-
-////BELOW IS FOR TESTING NO ONE SHOULD BE ABLE TO GET ALL USERS//////
-// router.get('/',
-// requireAuth ,
-//  async (req, res) => {
-//     const users = await User.findAll({
-//     })
-//     res.json(users)
-// })
-
+);     
 
 
 module.exports = router;

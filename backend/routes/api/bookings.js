@@ -1,10 +1,9 @@
 const express = require('express')
 
-const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Booking } = require('../../db/models');
+const { requireAuth } = require('../../utils/auth');
+const { Spot, sequelize, SpotImage, Booking } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const booking = require('../../db/models/booking');
 
 const router = express.Router();
 
@@ -18,16 +17,7 @@ const validateLogin = [
         .withMessage('Please provide a password.'),
     handleValidationErrors
 ];
-////BELOW IS FOR TESTING NO ONE SHOULD BE ABLE TO GET ALL USERS//////
-// router.get('/',
-//     // restoreUser,
-//     async (req, res) => {
-//         const bookings = await Booking.findAll({
 
-//         })
-//         res.json(bookings)
-//     })
-////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
 router.get('/current',
     async (req, res) => {
         validateLogin
@@ -44,13 +34,11 @@ router.get('/current',
         for (let boo of bookings) {
             if (!boo.Spot) continue
             boo.Spot.previewImage = boo.Spot.SpotImages[0].url
-
             delete boo.Spot.SpotImages
         }
         res.json({ bookings })
     })
 ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// 
-
 router.put('/:bookingId',
     // restoreUser,
     requireAuth,
@@ -58,7 +46,6 @@ router.put('/:bookingId',
         const { startDate, endDate } = req.body
         let { bookingId } = req.params
         const userId = req.user.id
-        // bookingId = +bookingId
         const thisBoo = await Booking.findByPk(bookingId)
         const today = new Date()
         console.log(thisBoo, bookingId, typeof bookingId)
@@ -80,8 +67,6 @@ router.put('/:bookingId',
                 }
             throw err
         }
-        console.log(thisBoo)
-
         let bookings = await Booking.findAll({
             where: { spotId: thisBoo.spotId },
             include: { model: Spot, attributes: ['ownerId'] },
@@ -94,7 +79,6 @@ router.put('/:bookingId',
             err.status = 403
             throw err
         }
-
         const startChange = new Date(startDate)
         const endChange = new Date(endDate)
         const err = new Error('Sorry, this spot is already booked for the specified dates')
@@ -110,7 +94,6 @@ router.put('/:bookingId',
             if (startChange >= startCheck && startChange <= endCheck) {
                 throw err
             }
-
             if (endChange <= endCheck && endChange >= startCheck) {
                 throw err
             }

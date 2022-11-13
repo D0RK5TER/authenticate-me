@@ -1,34 +1,8 @@
 const express = require('express')
-
-const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User, Spot, Review, ReviewImage, sequelize, SpotImage, Sequelize, DataTypes } = require('../../db/models');
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
-const queryInterface = sequelize.getQueryInterface();
+const { requireAuth } = require('../../utils/auth');
+const { User, Spot, Review, ReviewImage, SpotImage } = require('../../db/models');
 
 const router = express.Router();
-
-const validateLogin = [
-    check('credential')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .withMessage('Please provide a valid email or username.'),
-    check('password')
-        .exists({ checkFalsy: true })
-        .withMessage('Please provide a password.'),
-    handleValidationErrors
-];
-
-
-
-/////THIS IS FOR TESTING PURPOSES////////
-// router.get('/',
-//     async (req, res) => {
-//         const reviews = await Review.findAll({
-
-//         })
-//         res.json(reviews)
-//     })
 
 router.get('/current',
     requireAuth,
@@ -53,7 +27,7 @@ router.get('/current',
         }
         Reviews = JSON.parse(JSON.stringify(Reviews))
         for (let rev of Reviews) {
-            if(!rev.Spot) continue
+            if (!rev.Spot) continue
             rev.Spot.previewImage = rev.Spot.SpotImages[0].url
             delete rev.Spot.SpotImages
             delete rev.Spot.createdAt
