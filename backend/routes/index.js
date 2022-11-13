@@ -16,9 +16,9 @@ if (process.env.NODE_ENV === 'production') {
             path.resolve(__dirname, '../../frontend', 'build', 'index.html')
         );
     });
-    // Serve the static assets in the frontend's build folder
+    // Serve the static assets in the frontend build folder
     router.use(express.static(path.resolve("../frontend/build")));
-    // Serve the frontend's index.html file at all other routes NOT starting with /api
+    // Serve the frontend's index.html file at all other routes 
     router.get(/^(?!\/?api).*/, (req, res) => {
         res.cookie('XSRF-TOKEN', req.csrfToken());
         return res.sendFile(
