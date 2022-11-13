@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-// import * as eva from 'eva-icons';
 import * as sessionActions from '../../store/session';
 import outline from '../../assets/outline.png';
+import SignUpFormModal from '../SignUpFormPage/SignUpForm';
 
 function ProfileButton({ user }) {
     const dispatch = useDispatch();
@@ -43,13 +43,18 @@ function ProfileButton({ user }) {
                 </div>
 
                 {showMenu && (
-                    <ul className="profile-dropdown" style={{ translate: '-2em', textAlign: 'center' }}>
-                        <li >{user.username}</li>
-                        <li >{user.email}</li>
-                        <li>
-                            <button onClick={logout}>Log Out</button>
-                        </li>
-                    </ul>
+                    <>
+                        <SignUpFormModal />
+                        <ul className="profile-dropdown" style={{ translate: '-2em', textAlign: 'center' }}>
+                            <li >{user.username}</li>
+                            <li >{user.email}</li>
+                            <li>
+                                {/* <button onClick={logout}>Log Out</button> */}
+                            </li>
+
+
+                        </ul>
+                    </>
                 )}
             </div>
         </>

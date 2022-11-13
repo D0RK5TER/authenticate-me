@@ -14,14 +14,14 @@ function Navigation({ isLoaded }) {
     if (sessionUser) {
         sessionLinks = (
             <>
-                <ProfileButton user={sessionUser} />
+                <ProfileButton user={sessionUser}/>
             </>
         );
     } else {
         sessionLinks = (
             <>
                 <LoginFormModal />
-                <NavLink to="/signup">Sign Up</NavLink>
+                {/* <NavLink to="/signup">Sign Up</NavLink> */}
             </>
         );
     }
@@ -33,6 +33,8 @@ function Navigation({ isLoaded }) {
                 <img src={logo} style={{ paddingRight: '15px' }} />
                 earthRnR
             </NavLink>
+
+
             {sessionLinks}
         </span>
 
