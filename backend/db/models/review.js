@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     static getRating(arr) {
       let sum = 0
       let i = 0
-      if(!arr[0]) return 0
+      if (!arr[0]) return 0
       while (i < arr.length) {
         sum += arr[i].stars
         i++

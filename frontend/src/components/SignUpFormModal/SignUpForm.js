@@ -5,7 +5,6 @@ import * as sessionActions from '../../store/session';
 
 function SignUpForm() {
     const dispatch = useDispatch();
-    // const sessionUser = useSelector((state) => state.session.user);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState("");
@@ -13,8 +12,6 @@ function SignUpForm() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState([]);
-    // console.log(sessionUser)
-    // if (sessionUser) return <Redirect to="/" />;
 
     const handleSubmit = (e) => {
         e.preventDefault();

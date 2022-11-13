@@ -20,7 +20,7 @@
 .profileshape {
 
     height: 3em;
-    text-align: center;
+    /* text-align: center; */
     vertical-align: central;
     border-radius: 50%;
 }
@@ -38,11 +38,15 @@
 }
 
 .dropbar {
-    width: 7em;
-    padding-right: 2em;
+    width: 10em;
+    margin-right: 1em;
     text-align: center;
 }
 
+.profile-dropdown div {
+    padding-top: 4%;
+
+}
 
 .profilebutt {
     /* vertical-align: middle; */

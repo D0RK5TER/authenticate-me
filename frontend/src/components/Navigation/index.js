@@ -29,13 +29,13 @@ function Navigation() {
     // }
     // eva.replace()
     return (
-        <ul className='topbar'>
+        <div className='topbar'>
             <NavLink exact to="/" className={'homebutt'} >
                 <img src={logo} style={{ paddingRight: '15px' }} />
                 earthRnR
             </NavLink>
             <ProfileButton />
-        </ul>
+        </div>
 
     );
 }

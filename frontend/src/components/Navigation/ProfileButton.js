@@ -24,18 +24,17 @@ function ProfileButton() {
         sessionLinks = (
             <>
                 {showMenu && (
-                    <ul className="profile-dropdown" style={{ translate: '-2em', textAlign: 'center' }}>
-                        <li>
+                    <div className="profile-dropdown" style={{}}>
+                        <div>
 
                             <LoginFormModal />
-                        </li>
-                        <li>
-
+                        </div>
+                        <div>
                             <SignUpFormModal />
-                        </li>
+                        </div>
 
 
-                    </ul>
+                    </div>
 
                 )}
             </>
@@ -44,18 +43,18 @@ function ProfileButton() {
         sessionLinks = (
             <>
                 {showMenu && (
-                    <ul className="profile-dropdown" style={{ translate: '-2em', textAlign: 'center' }}>
-                        <li >{user.username}</li>
-                        <li >{user.email}</li>
-                        <li>
+                    <div className="profile-dropdown" style={{}}>
+                        <div >{user.username}</div>
+                        <div >{user.email}</div>
+                        <div>
                             <button onClick={logout}>Log Out</button>
-                        </li>
+                        </div>
                         {/* <li>
 
                             <SignUpFormModal />
                         </li> */}
 
-                    </ul>
+                    </div>
 
                 )}
             </>
@@ -68,7 +67,7 @@ function ProfileButton() {
         <div className='dropbar'>
 
 
-            <div>
+            <div className='dropbarformat'>
                 <button onClick={openMenu} className='profilebutt'>
                     <img src={outline} className='profileshape' />
                 </button>
