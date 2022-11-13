@@ -14,7 +14,7 @@ function SignUpFormModal() {
                     <SignUpForm />
                 </Modal>
             )}
-        </>
+         </>
     );
 }
 
