@@ -1,11 +1,25 @@
-/* TODO Add site wide styles */
-/* @font-face {
-    font-family: 'MyFont';
-    src: local('MyFont'), url() format('woff'); */
-/* other formats include: 'woff2', 'truetype, 'opentype',
-                              'embedded-opentype', and 'svg' */
-/* } */
+@font-face {
+    font-family: "Light";
+    src: local("earthrnrCerealLight"),
+        url("./assets/earthrnrCerealLight.ttf") format("truetype");
+}
 
 body {
     margin-top: 0;
+}
+
+.photocontainer {
+    padding: 2em;
+}
+
+
+.namearea {
+    text-align: center;
+    margin-top: 0;
+    font-family: 'Light';
+}
+
+.photo {
+    height: 300px;
+    width: 300px;
 }

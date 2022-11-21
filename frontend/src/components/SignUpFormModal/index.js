@@ -8,13 +8,13 @@ function SignUpFormModal() {
 
     return (
         <>
-            <button onClick={() => setShowModal(true)}>Sign Up</button>
+            <button onClick={() => setShowModal(true)} style={{ width: '100%' }}>Sign Up</button>
             {showModal && (
                 <Modal onClose={() => setShowModal(false)}>
                     <SignUpForm />
                 </Modal>
             )}
-         </>
+        </>
     );
 }
 

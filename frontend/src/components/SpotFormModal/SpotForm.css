@@ -4,24 +4,18 @@
         url("../../assets/earthrnrCerealLight.ttf") format("truetype");
 }
 
-.signupform {
-    /* font-size: 50%; */
+.spotform {
     font-family: "Light";
     display: inline-flex;
     align-items: center;
     flex-direction: column;
-    /* padding-top: 1em; */
-    /* vertical-align: text-top; */
-    /* vertical-align: middle; */
     box-sizing: border-box;
     border-color: black;
-    /* line-height: 100px; */
-    /* padding: 20px; */
     width: 30em;
-    /* white-space: nowrap; */
+  
 }
 
-.signupform label {
+.spotform label {
     /* align-self: flex-start; */
     /* width: 10em; */
     box-sizing: border-box;
@@ -30,7 +24,7 @@
     padding-top: 1em;
 }
 
-.signupform input {
+.spotform input {
     /* align-self: center; */
     box-sizing: border-box;
     align-items: center;
@@ -41,7 +35,7 @@
 
 }
 
-.signupform button {
+.spotform button {
     /* padding-bottom: 1em; */
     margin-bottom: 1em;
     border-radius: 15em;
@@ -53,7 +47,7 @@
     color: wheat;
 }
 
-.signupform button:hover {
+.spotform button:hover {
     /* padding-bottom: 1em; */
     filter: invert(100%);
     /* background-color: #fe5a62; */

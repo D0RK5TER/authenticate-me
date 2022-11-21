@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import * as sessionActions from '../../store/session';
-
+import './SignUpForm.css'
 function SignUpForm() {
     const dispatch = useDispatch();
     const [firstName, setFirstName] = useState("");
@@ -18,73 +18,90 @@ function SignUpForm() {
             setErrors([]);
             return dispatch(sessionActions.signup({ firstName, lastName, email, username, password }))
                 .catch(async (res) => {
-                    const data = await res.json();
-                    if (data && data.errors) setErrors(data.errors);
-                });
+                    const data = await res.json()
+                    if (data.message) setErrors([data.message]);
+                }
+                );
         }
         return setErrors(['Confirm Password field must be the same as the Password field']);
     };
 
     return (
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit} className='signupform' >
             <ul>
                 {errors.map((error, idx) => <li key={idx}>{error}</li>)}
             </ul>
+            <h2>Sign Up Today!</h2>
             <label>
-                First Name
                 <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
+                    placeholder='
+                    First Name
+                    '
                     required
                 />
             </label>
             <label>
-                Last Name
                 <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
+                    placeholder='
+                    Last Name
+                    
+                    '
                     required
                 />
             </label>
             <label>
-                Email
                 <input
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    placeholder='
+                    Email
+                    
+                    '
                     required
                 />
             </label>
             <label>
-                Username
                 <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    placeholder='
+                    Username
+                    
+                    '
                     required
                 />
             </label>
             <label>
-                Password
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder='
+                    Password
+                    
+                    '
                     required
                 />
             </label>
-            <label>
-                Confirm Password
+            <label >
                 <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    Confirm Password
+                    placeholder='Confirm Password'
                     required
                 />
             </label>
-            <button type="submit">Sign Up</button>
+            <button type="submit" style={{ marginTop: '1em' }} >Sign Up</button>
         </form>
     );
 }

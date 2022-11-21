@@ -17,6 +17,7 @@ export async function csrfFetch(url, options = {}) {
     // if the response status code is 400 or above, then throw an error 
     if (res.status >= 400) throw res;
     // if the response status code is under 400, then return the response 
+    // console.log(res)
     return res;
 }
 
