@@ -4,25 +4,25 @@ import ProfileButton from '../components/Navigation/ProfileButton';
 import logo from '../assets/logo.jpg';
 import quest from '../assets/quest.jpg'
 
-function Failure() {
+const Failure = () => {
 
     return (
         <>
             <div style={{ Top: '30em' }}>
-                asdasd
+                All lost
                 <div style={{ padding: '10em', top: '10em', zIndex: 1 }} >
                     <p>
-                        asdsadasd</p>
+                        and no where to go </p>
                 </div>
-                asdasdas
+                stick around
                 <div>
                     <div style={{ marginTop: '10em', top: '10em' }}>
 
-                        asdasd
+                        for the earthRNR show
 
                     </div>
 
-                    å                </div>
+                </div>
                 Click the home button to get a fresh start!
                 SORRY! we could not find what you were looking for!
                 Status Code: 404

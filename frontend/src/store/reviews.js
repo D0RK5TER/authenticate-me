@@ -19,7 +19,7 @@ export const delReview = (id) => {
 }
 
 export const oneReview = (review) => {
-    console.log(review)
+    // console.log(review)
     return {
         type: SET_REVIEW,
         review
@@ -31,7 +31,7 @@ export const oneReview = (review) => {
 
 export const loadAllReviews = (reviews) => {
     // let reviews = reviewss.Reviews
-    console.log(reviews)
+    // (reviews)
     return {
         type: GET_ALL_REVIEWS,
         reviews
@@ -45,7 +45,7 @@ export const getAllReviews = (id) => async (dispatch) => {
     // console.log(response)
     if (response.ok) {
         const data = await response.json();
-        console.log(data, 'BEFORE LOAD REVIEWS!!!')
+        // console.log(data, 'BEFORE LOAD REVIEWS!!!')
         dispatch(loadAllReviews(data.Reviews));
         return response;
     }
@@ -76,10 +76,10 @@ export const createReview = (newreview) => async (dispatch) => {
             review, stars
         }),
     });
-    console.log(response, 'RESPONSE FROM CREATE')
+    // console.log(response, 'RESPONSE FROM CREATE')
     if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         dispatch(oneReview(data));
         return response;
     }
@@ -94,11 +94,11 @@ const reviewReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_REVIEW:
             newState.reviews = [...state]
-            console.log(newState)
+            // console.log(newState)
             newState.reviews.push(action.review)
             // newState.reviews.push(action.Reviews)
             // const { reviews, ...rest } = state
-            console.log(newState, '!!!jacobs sodl!!')
+            // console.log(newState, '!!!jacobs sodl!!')
 
             // newState.reviews = [action.reviews, ...reviews]
             // newState = { rest, ...newState }
@@ -109,7 +109,7 @@ const reviewReducer = (state = initialState, action) => {
             // state
             newState = { ...rest }
             let newrevs = action.reviews
-            console.log(newState, newrevs)
+            // console.log(newState, newrevs)
             newState = newrevs
             // if (state?.reviews) newState.reviews.push(state.reviews)
             // console.log(newState, '!!!!!!sjahgdajsdajhdbajsdb')

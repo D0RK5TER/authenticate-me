@@ -135,13 +135,13 @@ export const getMySpots = () => async (dispatch) => {
 }
 export const getOneSpot = (id) => async (dispatch) => {
     // const { id } = spot
-    console.log(id, 'please be purple')
+    // console.log(id, 'please be purple')
     const response = await csrfFetch(`/api/spots/${+id}`, {
         method: 'GET',
     });
     if (response.ok) {
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         dispatch(loadOneSpot(data));
         return response;
     }
@@ -249,13 +249,13 @@ const loggedReducer = (state = initialState, action) => {
         case GET_ALL_SPOTS:
             newState = { ...state }
             newState.spots = (action.spots);
-            console.log(newState)
+            // (newState)
             return newState;
         case GET_ONE_SPOT:
             newState = { ...state }
             // newState.spot ? newState.onespot.push((action.payload)) :
             newState.onespot = action.spot
-            console.log(newState)
+            // console.log(newState)
             return newState;
         case CHANGE_A_SPOT:
             newState = Object.assign({}, state);

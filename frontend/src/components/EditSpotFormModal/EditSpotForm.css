@@ -41,6 +41,10 @@
     padding-top: 1em;
 }
 
+.deletebutt {
+    border-radius: 2em;
+}
+
 /* .editspotphoto button {
     background-color: rgba(10, 10, 10, 0.8);
     margin-top: .5em;
@@ -84,6 +88,12 @@
 .deletebutt:first-child {
     line-height: 1em;
     background-color: #141414;
+}
+
+.editspotbut {
+    border-radius: 2em;
+    background-color: #fc9399;
+    font-family: 'bold';
 }
 
 /* 

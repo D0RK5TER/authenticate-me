@@ -12,7 +12,7 @@
 }
 
 .editspotphoto button {
-    background-color: rgba(10, 10, 10, 0.8);
+    background-color: #fe5a62;
     margin-top: .5em;
     color: #fdfcfd;
     position: relative;
@@ -83,7 +83,7 @@
 
 .deletebutt:first-child {
     line-height: 1em;
-    background-color: #141414;
+    background-color: #fe5a62;
 }
 
 /* 

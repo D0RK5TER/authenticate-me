@@ -35,11 +35,11 @@ function SpotForm({ setShowModal }) {
         }
         ).then(async (res) => {
             const newres = await res.json()
-            console.log(newres)
-            console.log(res)
+                (newres)
+            // console.log(res)
             let newurl = res.url
             newurl = newurl.split('/api/spots/').pop()
-            console.log(newurl.slice(0, 2))
+            // console.log(newurl.slice(0, 2))
             // let newURL = res.url.slice(0, -7)
             history.push(`/spots/${newurl.slice(0, 2)}`)
 

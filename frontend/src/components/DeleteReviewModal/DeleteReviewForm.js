@@ -27,7 +27,7 @@ function DeleteReviewForm(id) {
             </ul>
             <p>Are You Sure?</p>
             <span>
-                <button type="submit" className="deletebutt">Update</button>
+                <button type="submit" className="deletebutt">Delete</button>
             </span>
         </form>
     );

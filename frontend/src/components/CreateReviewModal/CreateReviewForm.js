@@ -28,6 +28,7 @@ function CreateReviewForm({ id }) {
                     if (data.message) setErrors([data.message])
                     // dispatch(getAllReviews(id))
                 }
+                else setErrors(['something went wrong please try again! or maybe try the correct info!'])
                 // console.log(data, '!!!!!')
                 // else setErrors([res]);
 

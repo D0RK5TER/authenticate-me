@@ -33,7 +33,7 @@ const OneSpotIndex = () => {
   let theSpot = useSelector(state => state.logged.onespot)
   let thereviews = useSelector(state => state.reviews)
 
-  console.log(thereviews)
+  // console.log(thereviews)
   useEffect(() => {
     dispatch(reviewsAction.getAllReviews(id))
     dispatch(getOneSpot(id))
@@ -64,7 +64,7 @@ const OneSpotIndex = () => {
         <div className='picbox' style={{ display: 'inline-flex', flexWrap: 'wrap', marginLeft: '3em', marginRight: '3em' }}>
           <div className='picbox spotImageBig' style={{
             objectFit: 'fill', minWidth: '50%', flexDirection: 'row',
-            maxHeight: '550px',
+            maxHeight: '550px', marginRight: '2em',
             display: 'inline-flex', width: '100%', justifyContent: 'center'
           }} >
             <img src={previewImage} className='spotpreview' style={{ minWidth: '50%', }} />
@@ -83,7 +83,7 @@ const OneSpotIndex = () => {
                   style={{
                     'object-fit': 'contain',
                     // border: '3px',
-                    'border-radius': '50%',
+
                     maxHeight: '40%', maxWidth: '70%'
                   }} />
 
@@ -91,7 +91,7 @@ const OneSpotIndex = () => {
                   style={{
                     'object-fit': 'contain', borderRadius: '20px',
                     maxHeight: '40%', maxWidth: '70%',
-                    'border-radius': '50%',
+
 
                   }} />
 
@@ -99,7 +99,8 @@ const OneSpotIndex = () => {
                   style={{
                     'object-fit': 'contain', borderRadius: '20px',
                     maxHeight: '40%', maxWidth: '70%',
-                    'border-radius': '50%',
+                    marginLeft: ''
+
 
                   }} />
 
@@ -121,13 +122,13 @@ const OneSpotIndex = () => {
     let alreadyreviewed = []
 
 
-    console.log(thereviews)
+    // console.log(thereviews)
     if (user?.id > -1) {
       for (let x in thereviews) {
         alreadyreviewed.push(x.userId)
       }
       buttonVis = alreadyreviewed.length
-      console.log(buttonVis)
+      // console.log(buttonVis)
     }
     else buttonVis = false
 
@@ -143,7 +144,7 @@ const OneSpotIndex = () => {
         )
       }
       else reviewsCont = (
-        <div >
+        <div className='reviewscontainer'>
           {thereviews && thereviews[0] && (thereviews?.map(({ id, stars, review, userId, createdAt, User }) => (
             <div style={{
               fontFamily: 'Li',
@@ -182,7 +183,7 @@ const OneSpotIndex = () => {
               }}>
                 {review}
               </div>
-              {userId === user?.id && <DeleteReviewFormModal id={id} />}
+
             </div>
 
           )))}
@@ -196,12 +197,11 @@ const OneSpotIndex = () => {
     <div className="swap-down2 bigstyle" style={{ 'margin-top': '6em' }}>
       <div>
         <div>
-
         </div>
       </div>
       <div className='titlearea' >
 
-        <div className='nameandbutt namez' style={{ 'display': 'inline-flex', flexDirection: 'column' }}>
+        <div className='nameandbutt namez' style={{ 'display': 'inline-flex' }}>
           <span>
             {theSpot.name}
           </span>
@@ -213,25 +213,41 @@ const OneSpotIndex = () => {
         </div>
         <div className='descript'>
           <div className='nameandbutt22'>
-            <div className='starcont'>
-              <span className='ratin'>
+            <div className='starcont' style={{
+              'display': 'inline-flex',
+              alignItems: 'baseline',
+              justifyContent: 'space-evenly'
+
+            }}>
+              <span className='ratin' style={{
+
+                fontFamily: 'Bold',
+                fontSize: '2em'
+              }} >
                 <img src={star} className='starspot' id='starrr' />
                 {theSpot.avgStarRating}
               </span>
-              <span className='ratin' style={{ textDecoration: 'underline' }}>
-                {theSpot.numReviews}
-                <span style={{ paddingLeft: '.3em' }}>
+              <span className='ratin' id='rat' style={{
+                // "text-decoration": "none",
+                fontFamily: 'Bold',
+                fontSize: '2em',
+                paddingLeft: '4em',
+                // textDecoration: null
+              }}><div style={{ paddingLeft: '.5em', fontFamily: 'Bold' }}>
+
+                  {theSpot.numReviews}
+
                   reviews
-                </span >
-              </span>
+                </div>
+              </span >
               <span style={{ paddingLeft: '8em' }}>
               </span>
-              <div className='locationinfo'>
+              <div className='locationinfo' style={{ fontSize: '2em', fontFamily: 'Light' }}>
                 <div style={{}}>
                   {theSpot.city}
                   <div style={{}} >
+                    {theSpot.state}, {theSpot.country}
                   </div>
-                  {theSpot.state}, {theSpot.country}
                 </div>
               </div>
             </div>

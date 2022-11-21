@@ -24,7 +24,7 @@ function EditSpotForm({ props }) {
     let id = props.idx
     const handleDelete = (e) => {
         setErrors([]);
-        console.log(typeof e)
+        // console.log(typeof e)
         //  dispatch(deleteSpot(id))
         // .then(() => { history.push('/spots') })
         // .catch(async (res) => {
@@ -37,7 +37,7 @@ function EditSpotForm({ props }) {
     const handleSubmit = (e) => {
         // e.preventDefault()
         setErrors([]);
-        console.log(act)
+        // console.log(act)
         if (act) {
             return dispatch(deleteSpot(id))
                 .then(() => { history.push(`/spots`) })    

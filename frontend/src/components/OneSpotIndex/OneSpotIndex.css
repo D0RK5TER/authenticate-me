@@ -21,6 +21,37 @@
     src: local("popbold"),
         url("../../assets/popbold.ttf") format("truetype");
 }
+.locationinfo{
+font-family: 'bold';
+padding-top: 2em;
+    
+}
+#rat  {
+    display: inline-block; 
+    justify-content: center;
+    /* /* font-size: 1em; */
+    height: 1em;
+    font-size: 2em;
+    vertical-align: text-bottom;    /* padding-bottom: 2em; */
+    align-items:center
+    /* vertical-align: middle; */
+    /* align-items: center; */
+}
+
+#rat {
+    font-size: 90%;
+    align-items: baseline;
+}
+
+.reviewscontainer {
+    display: inline-flex;
+    flex-direction: row;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+
+}
 
 .spotImagesmall {
     margin-right: 0;
@@ -53,8 +84,14 @@
 }
 
 .starcont span {
-    /* width: 40%; */
-    width: 100%;
+    margin-top: 2em;
+    width: 40%;
+    height: 40%;
+    font-size: 1.8em;
+    align-content: center;
+    align-items: baseline;
+
+
 }
 
 .locationinfo {
@@ -127,7 +164,7 @@
 .rating {
     display: inline-flex;
     /* padding: .2em; */
-    
+
 }
 
 .reviewscontainer {
@@ -194,7 +231,7 @@
 }
 
 .namez:first-of-type span {
-    text-decoration: underline;
+    /* text-decoration: underline; */
     font-family: 'Bold';
 
 }

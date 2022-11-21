@@ -26,6 +26,8 @@ function App() {
 
   return (
     <>
+
+
       <Navigation isLoaded={isLoaded} />
 
       <Switch>
@@ -36,16 +38,12 @@ function App() {
         <Route exact path="/spots/:id" >
           <OneSpotIndex isLoaded={isLoaded} />
         </Route>
-        <Route exact path='/404ish' >
-          <h1>
-            Sorry, the page was not found...
-          </h1>
-        </Route>
-        <Redirect to='/404ish'>
-          {Failure}
-        </Redirect>
-        {/* <Route path="/books/:bookId/edit" component={EditBookForm} />  */}
+
+        <Route exact path='/404ish' component={Failure} />
+
+        <Redirect to='/404ish' />
       </Switch>
+
     </>
 
   );
