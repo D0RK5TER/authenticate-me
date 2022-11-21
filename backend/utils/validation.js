@@ -11,7 +11,6 @@ const handleValidationErrors = (req, _res, next) => {
             .array()
             .map((error) => `${error.msg}`);
 
-        console.log(typeof validationErrors)
         const err = Error('Bad request.');
 
         if (errors.includes('Please provide a valid email or username.')

@@ -48,7 +48,6 @@ router.put('/:bookingId',
         const userId = req.user.id
         const thisBoo = await Booking.findByPk(bookingId)
         const today = new Date()
-        console.log(thisBoo, bookingId, typeof bookingId)
         if (!thisBoo) {
             let er = new Error('Booking couldn`t be found')
             er.status = 404
@@ -72,7 +71,6 @@ router.put('/:bookingId',
             include: { model: Spot, attributes: ['ownerId'] },
         })
         bookings = JSON.parse(JSON.stringify(bookings))
-        console.log(bookings)
         const owner = bookings[0].Spot.ownerId
         if (thisBoo.userId !== userId && thisBoo.userId !== owner) {
             const err = new Error('Forbidden');
@@ -128,7 +126,7 @@ router.delete('/:bookingid',
             throw er
         }
         let owner = thebooking.dataValues.Spot.dataValues.ownerId
-        console.log(owner)
+        
         let today = new Date()
         let bookStart = thebooking.dataValues.startDate
         if (owner !== user && thebooking.dataValues.userId !== user) {

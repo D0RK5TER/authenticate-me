@@ -51,7 +51,7 @@ router.get('/:spotId/bookings',
             throw er
         }
         bookings = JSON.parse(JSON.stringify(bookings))
-        console.log(bookings[0].Spot.ownerId, user)
+        // console.log(bookings[0].Spot.ownerId, user)
         if (bookings[0].Spot.ownerId === user) {
             for (let b of bookings) {
                 b.id = +spotId
@@ -61,7 +61,7 @@ router.get('/:spotId/bookings',
         } else {
             for (let b of bookings) {
                 let c = {}
-                console.log(b)
+                // console.log(b)
                 delete b.userId
                 delete b.createdAt
                 delete b.updatedAt
@@ -76,6 +76,7 @@ router.get('/:spotId/bookings',
 router.get('/current',
     requireAuth,
     async (req, res) => {
+        //console.log('heyyyyyy')
         const user = req.user.id
         let spots = await Spot.findAll({
             where: { ownerId: user },
@@ -91,7 +92,7 @@ router.get('/current',
             spa.avgRating = Review.getRating(spa.Reviews)
             if (spa.SpotImages[0]) {
                 spa.previewImage = spa.SpotImages[0].url
-            } else spa.previewImage = 'No preview yet'
+            } else spa.previewImage = null
             delete spa.Reviews
             delete spa.SpotImages
             spa = spa
@@ -155,7 +156,7 @@ router.get('/:spotId', async (req, res) => {
     if (spots.Reviews[0]) {
         spots.avgStarRating = Review.getRating(spots.Reviews)
         spots.numReviews = spots.Reviews.length
-        delete spots.Reviews
+
     } else {
         spots.avgStarRating = 0
         spots.numReviews = 0
@@ -239,7 +240,7 @@ router.post('/:spotId/reviews',
             }
         }
         if (typeof review == 'string' && typeof stars == 'number') {
-            console.log(review, stars, typeof spotId)
+            //console.log(review, stars, typeof spotId)
             const newReview = await Review.create({
                 spotId: +spotId,
                 userId, userId,
@@ -310,10 +311,9 @@ router.post('/:spotId/bookings',
 router.post('/',
     requireAuth,
     async (req, res) => {
-        const { address, city, state, country, lat, lng, name, description, price } = req.body
-        const user = req.user.id
-        const check = req.body
-
+        const {user, address, city, state, country, lat, lng, name, description, price } = req.body
+        // const user = req.user.id
+        // const check = req.body
         if (address == undefined || city == undefined || state == undefined
             || country == undefined || lat == undefined || lng == undefined
             || name == undefined || description == undefined || price == undefined) {

@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       let imgURL = await SpotImage.findOne({
         where: { spotId: thisId },
       })
-      // console.log(imgURL)
+      // //console.log(imgURL)
       if (!imgURL) return 'none'
       else return imgURL.url
     }
@@ -25,6 +25,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   SpotImage.init({
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
     spotId: {
       type: DataTypes.INTEGER,
       allowNull: false,

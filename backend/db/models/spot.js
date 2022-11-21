@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         where: { id: thisId },
         include: [{ model: SpotImage, required: false }]
       })
-      
+
       return spot
     }
     static associate(models) {
@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Spot.init({
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
     ownerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -61,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [0, 50]
+        len: [0, 100]
       }
     },
     price: {

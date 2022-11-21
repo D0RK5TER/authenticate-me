@@ -83,7 +83,6 @@ router.put('/:reviewId',
 
         const Rev = await Review.findByPk(reviewId)
         let theRev = JSON.parse(JSON.stringify(Rev))
-        console.log(theRev, user)
         if (!theRev) {
             const err = new Error('Review couldn`t be found')
             err.status = 404
